@@ -1,0 +1,32 @@
+/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:143: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)
+Traceback (most recent call last):
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/scratch/maths/btech/mt1230785/col775_a2_hpc/col775_a2/retrieval.py", line 207, in <module>
+    main()
+  File "/scratch/maths/btech/mt1230785/col775_a2_hpc/col775_a2/retrieval.py", line 176, in main
+    txt_feats = _encode_texts(model, tok, captions, device, args.batch_size)
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/scratch/maths/btech/mt1230785/col775_a2_hpc/col775_a2/retrieval.py", line 79, in _encode_texts
+    t = model.encode_text(tokens, eot)
+  File "/scratch/maths/btech/mt1230785/col775_a2_hpc/col775_a2/models/clip_model.py", line 47, in encode_text
+    return self.text(tokens, eot_idx)
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/maths/btech/mt1230785/col775_a2_hpc/col775_a2/models/text_transformer.py", line 64, in forward
+    a, _ = blk.attn(y, y, y, attn_mask=attn_mask, need_weights=False)
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/modules/activation.py", line 1368, in forward
+    attn_output, attn_output_weights = F.multi_head_attention_forward(
+  File "/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/functional.py", line 6278, in multi_head_attention_forward
+    attn_output = scaled_dot_product_attention(
+RuntimeError: cuDNN Frontend error: [cudnn_frontend] Error: No execution plans support the graph.

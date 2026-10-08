@@ -1,0 +1,46 @@
+#!/bin/sh
+# Reconstruct Part_A/val (10k images) through the trained VAE and compute FID.
+# Needs: `pip install cleanfid` in col775_t25 + upload_bundle/cleanfid_cache/.
+#PBS -N vae_fid
+#PBS -P col775.mt1230785.course
+#PBS -q standard
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=02:00:00
+#PBS -o logs/vae_fid.out
+#PBS -e logs/vae_fid.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs samples
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+# clean-fid's InceptionV3W expects the weights at /tmp/inception-2015-12-05.pt on Linux.
+# Copy the bundled weights there so compute-node download (blocked by proxy) is avoided.
+if [ -f "$PBS_O_WORKDIR/cleanfid_cache/inception-2015-12-05.pt" ]; then
+    cp -f "$PBS_O_WORKDIR/cleanfid_cache/inception-2015-12-05.pt" /tmp/inception-2015-12-05.pt
+    echo "[cleanfid] placed Inception weights at /tmp/inception-2015-12-05.pt"
+fi
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.eval_vae_fid \
+    --data-root "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir  "$PBS_O_WORKDIR/checkpoints" \
+    --out-dir   "$PBS_O_WORKDIR/samples/vae_recon_val" \
+    --real-dir  "$PBS_O_WORKDIR/samples/real_val_128" \
+    --batch-size 64 --num-workers 8
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

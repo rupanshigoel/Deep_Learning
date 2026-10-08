@@ -1,0 +1,182 @@
+Assignment 2 (Part A) released
+Updated 4 days ago by Ashish Goswami and Parag Singla
+
+Dear Students.
+
+Assignment 2 (Part A) is released on the course website. Parts B, C will be released soon. The entire assignment is due on Thursday May 7 (11:59 pm). You are encouraged to start early.
+
+https://www.cse.iitd.ac.in/~parags/teaching/col775/
+
+regards.
+
+Parag
+
+----------
+
+Updates:
+
+-–--------
+
+     Dataset can be found on HPC on this path : /scratch/scai/phd/aiz228170/COL775-A2-2026/dataset/A2_dataset/
+    On Kaggle : https://www.kaggle.com/datasets/ashish2001/col775-a2-clevr-extended-100k/data
+    Caption files for Part_Aa are available here 
+
+0
+66 views
+36 Followup Discussions
+Resolved
+Anonymous Comp  3 weeks ago
+Python3.10 does not work on hpc gpus. Can this be downgraded to Python3.9 ?
+1
+Anonymous Helix  3 weeks ago
+You can have conda env and then download python3.10 in it
+0
+Anonymous Comp  3 weeks ago
+But, the GLIBC version on the GPU ( 2.17 ) does not allow python3.10 to run within conda env as well.
+0
+Anonymous Gear  3 weeks ago
+
+In conda, you can create the required python environment by using sysroot_linux-64=2.17 to install python3.10.
+1
+Ashish Goswami  2 weeks ago
+Seems resolved, closing this!
+0
+Resolved
+Anonymous Mouse  2 weeks ago
+The inputs to our model while testing will also be confined to CLEVR dataset info right (colours, shapes, materials) ?
+0
+Anonymous Mouse  2 weeks ago
+Asking so I can be clear on how task-specific I can make tokenizer
+0
+Ashish Goswami  2 weeks ago
+Yes
+0
+Resolved
+Anonymous Scale  2 weeks ago
+image.pngNaN
+
+I was going through dataset, the image_path in it is hardcoded in clevr_colors_train.json, I belive the image_path would refer to one of image inside Clever_official, so can i assume same directory structure will be maintained for Part_Aa so i can use just image_filename to navigate to right image in ../Clever_Official/images/train/
+
+image.png
+0
+Ashish Goswami  2 weeks ago
+
+    Yes, the jsons were accidentally saved with absolute paths, you can strip the initial path, and make it relative to the Clevr_official directory provided
+
+1
+Endorsed by Instructor (Ashish Goswami)
+Anonymous Mouse  2 weeks ago
+For the cross modal part, theres no captions in the Part_Aa directory. Do we use the Part_A for cross modal representation learning?
+0
+Ashish Goswami  1 week ago
+
+The caption files for Part_Aa are available here, use these for cross-modal retrieval
+
+https://drive.google.com/drive/folders/1I_aR_6KMaO-Ctagg65A-0PMmftbZPTfV?usp=sharing
+
+2
+Endorsed by Instructor (Ashish Goswami)
+Resolved
+Anonymous Gear  2 weeks ago
+
+Are we supposed to do data cleaning/validation also in the json files
+0
+Ashish Goswami  2 weeks ago
+
+Which json files are you referring to?
+
+0
+Anonymous Gear  2 weeks ago
+
+Part_A/train/clevr_train_caption.json And Part_A/train/CLEVR_scenes.json
+0
+Ashish Goswami  2 weeks ago
+You are free to explore filtering/cleaning
+0
+Resolved
+Anonymous Beaker  1 week ago
+In the dataset, Part_A has images, captions, and also clevr_scene.json. For part A of the assignment, to train the models, we would require only captions and images in part_A right? Why is the clevr_scene.json also given?
+0
+Ashish Goswami  1 week ago
+The scene file is for reference only describing details of each image. It's use is optional.
+0
+Resolved
+Anonymous Poet  1 week ago
+Is to possible to have the dataset on a common HPC server where everyone can access from? Would be really helpful as every team would not have to download 42GB on their HPC login nodes. Please let me know if there are any other alternatives to this.
+4
+Ashish Goswami  7 days ago
+
+The dataset is available here:
+
+/scratch/scai/phd/aiz228170/COL775-A2-2026/dataset/A2_dataset/
+0
+Anonymous Calc  5 days ago
+Can you please add caption files for Part_Aa as well in there?
+0
+Ashish Goswami  5 days ago
+They are available on the google-drive link(~25MB) please download from there.
+0
+Resolved
+Anonymous Calc  7 days ago
+
+The assignment mentions that identical captions in a contrastive batch make the learning signal less clean, and that we "must take this into account while constructing batches."
+
+Should we:
+
+    Filter out duplicate captions entirely so each batch contains only unique captions?
+    Keep duplicates in the batch but mask the corresponding off-diagonal entries in the similarity matrix during loss computation?
+
+0
+Ashish Goswami  7 days ago
+Both approaches have their pros and cons, you can choose either and provide your reasoning in the report.
+0
+Resolved
+Anonymous Atom  7 days ago
+Can we use torchvision.transforms to resize and normalize the image & PIL.Image for loading the images?
+0
+Ashish Goswami  7 days ago
+Yes
+1
+Anonymous Gear  4 days ago
+
+can we use torchvision 0.20+cu118? or are we supposed to use some another version?
+0
+Ashish Goswami  4 days ago
+You can use whichever version of torchvision that is compatible with the listed pytorch's version
+0
+Resolved
+Anonymous Mouse  5 days ago
+When will the other parts be released?
+0
+Ashish Goswami  5 days ago
+Released!
+https://piazza.com/class/mkjwhjzdksk51t/post/24
+0
+Resolved
+Anonymous Comp 2  4 days ago
+Sir,could you please upload the dataset on Kaggle as well? I am not able to get any job on the HPC,even for skylake node. It is currently showing an estimated start time of about 3 days even though I requested only 4 hours.
+0
+Ashish Goswami  4 days ago
+
+Uploaded here : 
+
+
+https://www.kaggle.com/datasets/ashish2001/col775-a2-clevr-extended-100k-tars
+
+But you'll have to extract and merge the tar files inside kaggle session.
+0
+Ashish Goswami  4 days ago
+Uploaded raw dataset as well here:
+
+https://www.kaggle.com/datasets/ashish2001/col775-a2-clevr-extended-100k/
+1
+Anonymous Comp 2  4 days ago
+Thanks Sir !!
+0
+Resolved
+Anonymous Beaker  4 days ago
+In which part is the test dataset in part_Aa being used? Since only train and val are being used for part 2.1,2.2,2.3.
+0
+Ashish Goswami  4 days ago
+You can optionally report your metrics on it.
+0

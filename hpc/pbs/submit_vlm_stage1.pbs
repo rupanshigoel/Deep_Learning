@@ -1,0 +1,51 @@
+#!/bin/sh
+# Stage-1 VLM training: MLP projector only, on 70K Clevr_official captions.
+# Writes checkpoints/vlm_stage1_last.pt every 200 steps; auto-resumable.
+#PBS -N vlm_stage1
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=16:ngpus=1:centos=icelake
+#PBS -l walltime=03:30:00
+#PBS -o logs/vlm_stage1.out
+#PBS -e logs/vlm_stage1.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "node list : $(cat $PBS_NODEFILE)"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs checkpoints
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+export HF_HOME="$PBS_O_WORKDIR/archive/hf_cache"
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+
+nvidia-smi 2>/dev/null || true
+python -c "import torch; print('torch', torch.__version__, 'cuda?', torch.cuda.is_available())"
+
+python -u -m col775_a2.train_vlm_stage1 \
+    --data-root  "$PBS_O_WORKDIR/A2_dataset/Part_Aa/Clevr_official" \
+    --dino-ckpt  "$PBS_O_WORKDIR/checkpoints/dino_final.pt" \
+    --qwen-path  "Qwen/Qwen3-4B-Instruct-2507" \
+    --ckpt-dir   "$PBS_O_WORKDIR/checkpoints" \
+    --log-dir    "$PBS_O_WORKDIR/logs" \
+    --batch-size 2 \
+    --grad-accum 16 \
+    --lr 1e-3 \
+    --epochs 1 \
+    --num-workers 10 \
+    --log-every 20 \
+    --ckpt-every-steps 200
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

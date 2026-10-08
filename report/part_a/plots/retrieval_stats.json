@@ -1,0 +1,30 @@
+{
+  "i2t": {
+    "direction": "i2t",
+    "n_failures": 596,
+    "n_total": 15000,
+    "same_count_pct": 41.78,
+    "same_color_set_pct": 18.96,
+    "same_size_set_pct": 25.17,
+    "same_material_set_pct": 24.16,
+    "same_shape_set_pct": 5.7
+  },
+  "t2i": {
+    "direction": "t2i",
+    "n_failures": 525,
+    "n_total": 15000,
+    "same_count_pct": 43.62,
+    "same_color_set_pct": 28.0,
+    "same_size_set_pct": 26.29,
+    "same_material_set_pct": 28.95,
+    "same_shape_set_pct": 6.29
+  },
+  "recall": {
+    "i2t_R@1": 96.03,
+    "i2t_R@3": 99.25,
+    "t2i_R@1": 96.5,
+    "t2i_R@3": 99.53,
+    "i2t_R@1_cap_equiv": 96.13,
+    "t2i_R@1_cap_equiv": 96.59
+  }
+}

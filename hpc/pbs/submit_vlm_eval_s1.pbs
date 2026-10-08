@@ -1,0 +1,45 @@
+#!/bin/sh
+# Stage-1 evaluation: image captioning EM + BLEU on train-subset + val-subset.
+#PBS -N vlm_eval_s1
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=02:15:00
+#PBS -o logs/vlm_eval_s1.out
+#PBS -e logs/vlm_eval_s1.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+export HF_HOME="$PBS_O_WORKDIR/archive/hf_cache"
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.eval_vlm \
+    --stage 1 \
+    --projector-ckpt "$PBS_O_WORKDIR/checkpoints/vlm_stage1_projector.pt" \
+    --dino-ckpt      "$PBS_O_WORKDIR/checkpoints/dino_final.pt" \
+    --qwen-path      "Qwen/Qwen3-4B-Instruct-2507" \
+    --data-root      "$PBS_O_WORKDIR/A2_dataset/Part_Aa/Clevr_official" \
+    --out-dir        "$PBS_O_WORKDIR/logs/vlm_eval_stage1" \
+    --batch-size 8 --num-workers 4 \
+    --train-subsample 2000 --val-subsample 0 \
+    --max-new-tokens 96
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

@@ -1,0 +1,42 @@
+#!/bin/sh
+# Full VAE training: 100 epochs @ 128x128, batch 64 on an A100. ~10-15 min/epoch.
+# Auto-resumes from checkpoints/vae_last.pt. Expect 1 x 24h run to suffice.
+#PBS -N vae_train
+#PBS -P col775.mt1230785.course
+#PBS -q standard
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=16:ngpus=1:centos=icelake
+#PBS -l walltime=24:00:00
+#PBS -o logs/vae.out
+#PBS -e logs/vae.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "node list : $(cat $PBS_NODEFILE)"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs checkpoints
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+nvidia-smi 2>/dev/null || true
+python -c "import torch; print('torch', torch.__version__, 'cuda?', torch.cuda.is_available())"
+
+python -u -m col775_a2.train_vae \
+    --data-root "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir  "$PBS_O_WORKDIR/checkpoints" \
+    --log-dir   "$PBS_O_WORKDIR/logs" \
+    --num-workers 12 \
+    --batch-size 64 \
+    --epochs 100
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

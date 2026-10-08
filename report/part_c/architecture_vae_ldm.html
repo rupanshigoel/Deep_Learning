@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Explanations: VAE and LDM</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background-color: #f4f7f6;
+        color: #2d3748;
+        line-height: 1.6;
+        padding: 20px;
+        margin: 0;
+    }
+    h1, h2, h3 {
+        color: #1a202c;
+    }
+    .container {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+    .section-row {
+        display: flex;
+        flex-direction: row;
+        gap: 40px;
+        margin-bottom: 60px;
+        align-items: flex-start;
+    }
+    .macro-col {
+        flex: 2;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 35px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        min-width: 0;
+    }
+    .micro-col {
+        flex: 1;
+        position: sticky;
+        top: 20px;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 35px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 2px solid #cbd5e1;
+        min-width: 380px;
+        overflow: visible;
+    }
+    
+    @media (max-width: 1100px) {
+        .section-row {
+            flex-direction: column;
+        }
+        .micro-col {
+            position: static;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    /* Tensors & Badges */
+    .tensor {
+        display: inline-block;
+        background-color: #e2e8f0;
+        color: #c53030;
+        font-family: ui-monospace, monospace;
+        font-size: 0.85em;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 6px;
+        margin-top: 6px;
+        border: 1px solid #cbd5e1;
+    }
+    .time-badge {
+        background: #e6fffa;
+        color: #234e52;
+        border: 1px solid #319795;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.85em;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .text-badge {
+        background: #ebf8ff;
+        color: #2a4365;
+        border: 1px solid #3182ce;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.85em;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    /* Flow Building Blocks */
+    .arch-flow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .box {
+        width: 100%;
+        max-width: 450px;
+        border: 2px solid #cbd5e1;
+        border-radius: 10px;
+        background-color: #f8fafc;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .box-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        font-size: 1.1em;
+        margin-bottom: 5px;
+    }
+    
+    /* Lines and Arrows */
+    .path-line {
+        width: 2px;
+        height: 20px;
+        background-color: #94a3b8;
+        margin: 0 auto;
+    }
+    .path-arrow {
+        width: 0; 
+        height: 0; 
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 8px solid #94a3b8;
+        margin: 0 auto 5px auto;
+    }
+
+    .node {
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        padding: 8px 15px;
+        border-radius: 6px;
+        text-align: center;
+        width: 180px;
+        box-sizing: border-box;
+        font-size: 0.9em;
+        font-weight: 600;
+        color: #4a5568;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        position: relative;
+        z-index: 5;
+    }
+    .op {
+        background: #edf2f7;
+        font-weight: bold;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        line-height: 28px;
+        margin: 0 auto;
+        text-align: center;
+        border: 2px solid #a0aec0;
+        font-size: 20px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* U-Net Specifics */
+    .unet-wrapper {
+        display: grid;
+        grid-template-columns: 310px 120px 310px;
+        grid-template-rows: auto auto auto auto auto;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+    }
+    .unet-box {
+        border: 2px solid #cbd5e1;
+        padding: 15px;
+        border-radius: 8px;
+        background: white;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .skip-link-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+    }
+    .skip-dashed-line {
+        width: 100%;
+        height: 3px;
+        background: repeating-linear-gradient(90deg, #4299e1, #4299e1 8px, transparent 8px, transparent 16px);
+        position: relative;
+    }
+    .skip-arrowhead {
+        position: absolute;
+        right: -5px;
+        top: -4px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-left: 10px solid #4299e1;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align: center; margin-bottom: 50px;">Architectural Breakdown: VAE and LDM</h1>
+
+    <!-- ==================== VAE SECTION ==================== -->
+    <div class="section-row">
+        <!-- VAE MACRO -->
+        <div class="macro-col">
+            <h2 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">1. Variational Autoencoder (VAE)</h2>
+            <p style="color: #718096; margin-bottom: 30px;">Compresses the 128x128 RGB image into a compact 16x16x4 continuous latent space.</p>
+            
+            <div class="arch-flow">
+                <div class="box" style="background-color: #fefcbf; border-color: #d69e2e;">
+                    <div class="box-title" style="color: #975a16;">Input Image</div>
+                    <div class="tensor">(B, 3, 128, 128)</div>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box">
+                    <div class="box-title">Encoder Initial Conv</div>
+                    Conv2d (3x3)
+                    <br><span class="tensor">(B, 32, 128, 128)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="border-left: 5px solid #4299e1;">
+                    <div class="box-title">Encoder Stage 1</div>
+                    2x ResBlock<br>
+                    Downsample Conv (stride=2)
+                    <br><span class="tensor">(B, 32, 64, 64)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="border-left: 5px solid #4299e1;">
+                    <div class="box-title">Encoder Stage 2</div>
+                    2x ResBlock<br>
+                    Downsample Conv (stride=2)
+                    <br><span class="tensor">(B, 64, 32, 32)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="border-left: 5px solid #4299e1;">
+                    <div class="box-title">Encoder Stage 3</div>
+                    2x ResBlock<br>
+                    Downsample Conv (stride=2)
+                    <br><span class="tensor">(B, 128, 16, 16)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="background-color: #faf5ff; border-color: #9f7aea; padding-bottom: 20px;">
+                    <div class="box-title" style="color: #6b46c1;">Bottleneck (Mid & Reparameterization)</div>
+                    2x ResBlock &rarr; Conv2d (to 8 channels)<br>
+                    <div style="display: flex; gap: 20px; justify-content: center; margin: 15px 0;">
+                        <div style="flex: 1; background: #fff; border: 1px solid #d6bcfa; border-radius: 8px; padding: 10px;">
+                            <strong>Mean (&mu;)</strong><br>
+                            <span class="tensor">(B, 4, 16, 16)</span>
+                        </div>
+                        <div style="flex: 1; background: #fff; border: 1px solid #d6bcfa; border-radius: 8px; padding: 10px;">
+                            <strong>LogVar</strong><br>
+                            <span class="tensor">(B, 4, 16, 16)</span>
+                        </div>
+                    </div>
+                    <div class="path-line" style="height: 10px;"></div><div class="path-arrow" style="margin-bottom: 0;"></div>
+                    <div style="background: #fff; border: 1px solid #d6bcfa; border-radius: 8px; padding: 10px; display: inline-block;">
+                        Sample &epsilon; ~ &Nu;(0, I)<br>
+                        z = &mu; + exp(0.5 &times; LogVar) &times; &epsilon;
+                        <br><span class="tensor">(B, 4, 16, 16)</span>
+                    </div>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box">
+                    <div class="box-title">Decoder Initial Conv</div>
+                    Conv2d (3x3)
+                    <br><span class="tensor">(B, 128, 16, 16)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box">
+                    <div class="box-title">Decoder Mid</div>
+                    2x ResBlock
+                    <br><span class="tensor">(B, 128, 16, 16)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="border-right: 5px solid #48bb78;">
+                    <div class="box-title">Decoder Stage 1</div>
+                    Upsample (Nearest 2x + Conv2d)<br>
+                    2x ResBlock
+                    <br><span class="tensor">(B, 128, 32, 32)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="border-right: 5px solid #48bb78;">
+                    <div class="box-title">Decoder Stage 2</div>
+                    Upsample (Nearest 2x + Conv2d)<br>
+                    2x ResBlock
+                    <br><span class="tensor">(B, 64, 64, 64)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="border-right: 5px solid #48bb78;">
+                    <div class="box-title">Decoder Stage 3</div>
+                    Upsample (Nearest 2x + Conv2d)<br>
+                    2x ResBlock
+                    <br><span class="tensor">(B, 32, 128, 128)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+
+                <div class="box" style="background-color: #fefcbf; border-color: #d69e2e;">
+                    <div class="box-title" style="color: #975a16;">Output Projection</div>
+                    GroupNorm &rarr; SiLU &rarr; Conv2d (to 3ch) &rarr; Tanh
+                    <br><span class="tensor">(B, 3, 128, 128)</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VAE MICRO (ResBlock) -->
+        <div class="micro-col">
+            <h3 style="color: #2c5282; margin-top: 0; text-align: center; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px;">Magnified: ResBlock</h3>
+            <p style="font-size: 0.9em; color: #718096; text-align: center;">The fundamental building block used throughout the VAE and LDM.</p>
+
+            <div style="text-align: center; font-family: monospace; font-weight: bold; margin-top: 20px;">Input Tensor</div>
+            <div class="path-line"></div><div class="path-arrow" style="margin-bottom: 0;"></div>
+            
+            <div style="position: relative; width: 180px; margin: 0 auto; padding-top: 20px;">
+                <!-- ================= SKIP CONNECTION ================= -->
+                <!-- Top connection -->
+                <div style="position: absolute; top: 0; left: 90px; width: 140px; height: 3px; background: #94a3b8;"></div>
+                <!-- Right vertical -->
+                <div style="position: absolute; top: 0; left: 230px; bottom: 18px; width: 3px; background: #94a3b8;"></div>
+                <!-- Bottom connection -->
+                <div style="position: absolute; bottom: 18px; left: 90px; width: 140px; height: 3px; background: #94a3b8;"></div>
+                <!-- Arrow Head pointing left -->
+                <div style="position: absolute; bottom: 12px; left: 90px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-right: 10px solid #94a3b8;"></div>
+
+                <!-- Skip Label -->
+                <div style="position: absolute; top: 50%; left: 245px; transform: translateY(-50%); font-size: 13px; font-weight: bold; color: #64748b; white-space: nowrap;">
+                    Identity Skip<br><span style="font-size:11px;font-weight:normal;">(1x1 Conv if needed)</span>
+                </div>
+                <!-- =================================================== -->
+
+                <!-- MAIN PATH -->
+                <div class="node">GroupNorm</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node">SiLU</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node">Conv2d (3x3)</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node time-badge" style="width: 180px; justify-content: center;">
+                    ◷ Time Embed<br><span style="font-size: 0.8em; font-weight: normal;">(LDM Only)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node">GroupNorm</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node">SiLU</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node">Conv2d (3x3)</div>
+                
+                <div class="path-line"></div><div class="path-arrow"></div>
+                
+                <!-- Addition Node -->
+                <div class="op" style="background: #fff; border-color: #94a3b8; color: #4a5568;">&oplus;</div>
+            </div>
+            
+            <div class="path-line"></div><div class="path-arrow"></div>
+            <div style="text-align: center; font-family: monospace; font-weight: bold; margin-bottom: 20px;">Output Tensor</div>
+        </div>
+    </div>
+
+
+    <!-- ==================== LDM SECTION ==================== -->
+    <div class="section-row">
+        <!-- LDM MACRO -->
+        <div class="macro-col">
+            <h2 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">2. Conditional U-Net (LDM)</h2>
+            <p style="color: #718096; margin-bottom: 10px;">Denoises the VAE latent conditioned on the current Timestep and the CLIP Text Prompt. Note how <span style="font-weight:bold;color:#234e52;">Time</span> and <span style="font-weight:bold;color:#2a4365;">Text</span> are injected into specific stages.</p>
+            
+            <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 30px;">
+                <div class="time-badge" style="font-size: 1.1em; padding: 6px 15px;">◷ Timestep Emb: (B, 256)</div>
+                <div class="text-badge" style="font-size: 1.1em; padding: 6px 15px;">✎ CLIP Text Emb: (B, Seq, 512)</div>
+            </div>
+
+            <div class="unet-wrapper">
+                <!-- ROW 1: Init / D0 / U2 -->
+                <div class="unet-box" style="border-left: 6px solid #4299e1;">
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                        <span class="time-badge">◷ Time</span>
+                    </div>
+                    <div class="box-title">DownStage 0</div>
+                    Init Conv2d (to 64ch)<br>
+                    2x ResBlock<br>
+                    Downsample Conv (stride=2)<br>
+                    <span class="tensor">(B, 64, 8, 8)</span>
+                </div>
+                
+                <div class="skip-link-container">
+                    <div style="font-size: 13px; font-weight: bold; color: #2b6cb0; margin-bottom: 5px;">Skip 0<br><span style="font-weight:normal; font-size:11px;">(B, 64, 8, 8)</span></div>
+                    <div class="skip-dashed-line"><div class="skip-arrowhead"></div></div>
+                </div>
+
+                <div class="unet-box" style="border-right: 6px solid #48bb78; background: #f0fff4;">
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                        <span class="time-badge">◷ Time</span>
+                    </div>
+                    <div class="box-title" style="color: #2f855a;">UpStage 2</div>
+                    Concat Skip 0<br>
+                    2x ResBlock<br>
+                    <span class="tensor">(B, 64, 16, 16)</span><br>
+                    <div class="path-line" style="height:10px;"></div><div class="path-arrow" style="margin-bottom:0;"></div>
+                    <strong>Output Conv2d</strong> &rarr; <span class="tensor" style="background: white;">(B, 4, 16, 16)</span>
+                </div>
+
+                <!-- Down/Up vertical flows -->
+                <div style="text-align: center;"><div class="path-line" style="height:30px;"></div><div class="path-arrow"></div></div>
+                <div></div>
+                <div style="text-align: center;"><div class="path-line" style="height:30px; margin-top:10px;"></div><div class="path-arrow" style="transform: rotate(180deg); margin-top:-38px; margin-bottom:30px;"></div></div>
+
+                <!-- ROW 2: D1 / U1 -->
+                <div class="unet-box" style="border-left: 6px solid #4299e1;">
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                        <span class="time-badge">◷ Time</span>
+                        <span class="text-badge">✎ Text</span>
+                    </div>
+                    <div class="box-title">DownStage 1</div>
+                    2x ResBlock<br>
+                    <strong>Spatial Transformer</strong><br>
+                    Downsample Conv (stride=2)<br>
+                    <span class="tensor">(B, 128, 4, 4)</span>
+                </div>
+                
+                <div class="skip-link-container">
+                    <div style="font-size: 13px; font-weight: bold; color: #2b6cb0; margin-bottom: 5px;">Skip 1<br><span style="font-weight:normal; font-size:11px;">(B, 128, 4, 4)</span></div>
+                    <div class="skip-dashed-line"><div class="skip-arrowhead"></div></div>
+                </div>
+
+                <div class="unet-box" style="border-right: 6px solid #48bb78;">
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                        <span class="time-badge">◷ Time</span>
+                        <span class="text-badge">✎ Text</span>
+                    </div>
+                    <div class="box-title" style="color: #2f855a;">UpStage 1</div>
+                    Concat Skip 1<br>
+                    2x ResBlock<br>
+                    <strong>Spatial Transformer</strong><br>
+                    Upsample (Nearest 2x + Conv)<br>
+                    <span class="tensor">(B, 128, 16, 16)</span>
+                </div>
+
+                <!-- Down/Up vertical flows -->
+                <div style="text-align: center;"><div class="path-line" style="height:30px;"></div><div class="path-arrow"></div></div>
+                <div></div>
+                <div style="text-align: center;"><div class="path-line" style="height:30px; margin-top:10px;"></div><div class="path-arrow" style="transform: rotate(180deg); margin-top:-38px; margin-bottom:30px;"></div></div>
+
+                <!-- ROW 3: D2 / U0 -->
+                <div class="unet-box" style="border-left: 6px solid #4299e1;">
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                        <span class="time-badge">◷ Time</span>
+                        <span class="text-badge">✎ Text</span>
+                    </div>
+                    <div class="box-title">DownStage 2</div>
+                    2x ResBlock<br>
+                    <strong>Spatial Transformer</strong><br>
+                    <span style="font-size:0.85em; color:#718096;">(No Downsample Conv)</span><br>
+                    <span class="tensor">(B, 256, 4, 4)</span>
+                </div>
+                
+                <div class="skip-link-container">
+                    <div style="font-size: 13px; font-weight: bold; color: #2b6cb0; margin-bottom: 5px;">Skip 2<br><span style="font-weight:normal; font-size:11px;">(B, 256, 4, 4)</span></div>
+                    <div class="skip-dashed-line"><div class="skip-arrowhead"></div></div>
+                </div>
+
+                <div class="unet-box" style="border-right: 6px solid #48bb78;">
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                        <span class="time-badge">◷ Time</span>
+                        <span class="text-badge">✎ Text</span>
+                    </div>
+                    <div class="box-title" style="color: #2f855a;">UpStage 0</div>
+                    Concat Skip 2<br>
+                    2x ResBlock<br>
+                    <strong>Spatial Transformer</strong><br>
+                    Upsample (Nearest 2x + Conv)<br>
+                    <span class="tensor">(B, 256, 8, 8)</span>
+                </div>
+
+                <!-- Angled flows to MidStage -->
+                <div style="grid-column: 1 / 2; text-align: right; padding-right: 60px; font-size: 32px; color: #94a3b8; line-height: 1;">&searr;</div>
+                <div></div>
+                <div style="grid-column: 3 / 4; text-align: left; padding-left: 60px; font-size: 32px; color: #94a3b8; line-height: 1;">&nearr;</div>
+
+                <!-- ROW 4: MIDSTAGE -->
+                <div style="grid-column: 1 / 4; display: flex; justify-content: center; margin-top: -10px;">
+                    <div class="unet-box" style="width: 310px; background: #faf5ff; border-color: #9f7aea;">
+                        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                            <span class="time-badge">◷ Time</span>
+                            <span class="text-badge">✎ Text</span>
+                            <span class="time-badge">◷ Time</span>
+                        </div>
+                        <div class="box-title" style="color: #6b46c1;">MidStage</div>
+                        ResBlock<br>
+                        <strong>Spatial Transformer</strong><br>
+                        ResBlock<br>
+                        <span class="tensor">(B, 256, 4, 4)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LDM MICRO (Spatial Transformer) -->
+        <div class="micro-col">
+            <h3 style="color: #2c5282; margin-top: 0; text-align: center; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px;">Magnified: Spatial Transformer</h3>
+            <p style="font-size: 0.9em; color: #718096; text-align: center;">Injects Text Conditioning via Cross-Attention.</p>
+
+            <div style="text-align: center; font-family: monospace; font-weight: bold; margin-top: 20px;">Input Features</div>
+            <div class="path-line"></div><div class="path-arrow" style="margin-bottom: 0;"></div>
+
+            <!-- ================= SELF ATTENTION ================= -->
+            <div style="position: relative; width: 180px; margin: 0 auto; padding-top: 20px;">
+                <!-- Skip connection -->
+                <div style="position: absolute; top: 0; left: 90px; width: 120px; height: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; top: 0; left: 210px; bottom: 18px; width: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; bottom: 18px; left: 90px; width: 120px; height: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; bottom: 12px; left: 90px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-right: 10px solid #94a3b8;"></div>
+                
+                <div class="node">LayerNorm</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node" style="background: #feebc8; border-color: #dd6b20; color: #9c4221;">
+                    <strong>Self-Attention</strong><br>
+                    <span style="font-size: 0.8em; font-weight: normal;">(Q, K, V from Image)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="op" style="background: #fff; border-color: #94a3b8; color: #4a5568;">&oplus;</div>
+            </div>
+            
+            <div class="path-line" style="height: 25px;"></div><div class="path-arrow" style="margin-bottom: 0;"></div>
+
+            <!-- ================= CROSS ATTENTION ================= -->
+            <div style="position: relative; width: 180px; margin: 0 auto; padding-top: 20px;">
+                <!-- Skip connection -->
+                <div style="position: absolute; top: 0; left: 90px; width: 120px; height: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; top: 0; left: 210px; bottom: 18px; width: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; bottom: 18px; left: 90px; width: 120px; height: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; bottom: 12px; left: 90px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-right: 10px solid #94a3b8;"></div>
+
+                <!-- EXPLICIT TEXT INJECTION -->
+                <div style="position: absolute; top: 50%; right: 100%; margin-right: 15px; transform: translateY(-50%); display: flex; align-items: center; gap: 8px;">
+                    <div class="text-badge">✎ CLIP Text</div>
+                    <div style="color: #3182ce; font-weight: bold; font-size: 22px;">&rarr;</div>
+                </div>
+                
+                <div class="node">LayerNorm</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node" style="background: #ebf8ff; border-color: #3182ce; color: #2a4365;">
+                    <strong>Cross-Attention</strong><br>
+                    <span style="font-size: 0.8em; font-weight: normal;">(Q: Image | K,V: Text)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="op" style="background: #fff; border-color: #94a3b8; color: #4a5568;">&oplus;</div>
+            </div>
+            
+            <div class="path-line" style="height: 25px;"></div><div class="path-arrow" style="margin-bottom: 0;"></div>
+
+            <!-- ================= FEED FORWARD ================= -->
+            <div style="position: relative; width: 180px; margin: 0 auto; padding-top: 20px;">
+                <!-- Skip connection -->
+                <div style="position: absolute; top: 0; left: 90px; width: 120px; height: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; top: 0; left: 210px; bottom: 18px; width: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; bottom: 18px; left: 90px; width: 120px; height: 3px; background: #94a3b8;"></div>
+                <div style="position: absolute; bottom: 12px; left: 90px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-right: 10px solid #94a3b8;"></div>
+
+                <div class="node">LayerNorm</div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="node" style="background: #faf5ff; border-color: #805ad5; color: #44337a;">
+                    <strong>Feed-Forward Net</strong><br>
+                    <span style="font-size: 0.8em; font-weight: normal;">(MLP expansion)</span>
+                </div>
+                <div class="path-line"></div><div class="path-arrow"></div>
+                <div class="op" style="background: #fff; border-color: #94a3b8; color: #4a5568;">&oplus;</div>
+            </div>
+
+            <div class="path-line"></div><div class="path-arrow"></div>
+            
+            <div style="text-align: center; font-family: monospace; font-weight: bold; margin-bottom: 10px;">Output Features</div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

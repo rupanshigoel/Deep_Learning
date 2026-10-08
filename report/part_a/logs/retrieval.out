@@ -1,0 +1,42 @@
+================================
+PBS jobid : 886045.pbshpc
+node list : aice009.hpc.iitd.ac.in
+Thu Apr 23 22:18:01 IST 2026
+================================
+Thu Apr 23 22:18:08 2026       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.129.03             Driver Version: 535.129.03   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-PCIE-40GB          Off | 00000000:2B:00.0 Off |                    0 |
+| N/A   39C    P0              37W / 250W |      4MiB / 40960MiB |      4%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
+torch 2.5.0+cu118 cuda? True
+[retrieval] 15000 val (image, caption) pairs
+[retrieval] CLIP loaded (32.7M params)
+[retrieval] img_feats (15000, 512)  txt_feats (15000, 512)
+
+============ Recall@K ============
+  Image -> Text   R@1=96.03%   R@3=99.25%
+  Text  -> Image  R@1=96.50%   R@3=99.53%
+  (caption-equivalence) i2t R@1=96.13%   t2i R@1=96.59%
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/plots/retrieval_i2t_success.png
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/plots/retrieval_i2t_failure.png
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/plots/retrieval_t2i_success.png
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/plots/retrieval_t2i_failure.png
+================================
+exit code : 0
+Thu Apr 23 22:25:10 IST 2026
+================================

@@ -1,0 +1,101 @@
+================================
+PBS jobid : 885015.pbshpc
+workdir   : /home/maths/btech/mt1230785/scratch/col775_a2_hpc
+Thu Apr 23 12:54:20 IST 2026
+================================
+[cleanfid] placed Inception weights at /tmp/inception-2015-12-05.pt
+Thu Apr 23 12:54:30 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.90.07              Driver Version: 550.90.07      CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          Off |   00000000:2B:00.0 Off |                    0 |
+| N/A   39C    P0             43W /  250W |       1MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+[model] LDM loaded from /home/maths/btech/mt1230785/scratch/col775_a2_hpc/checkpoints/ldm_last.pt  epoch=149
+[data] sampling 10000 captions -> /home/maths/btech/mt1230785/scratch/col775_a2_hpc/samples/ldm_val
+[sample] 160/10000 done
+[sample] 320/10000 done
+[sample] 480/10000 done
+[sample] 640/10000 done
+[sample] 800/10000 done
+[sample] 960/10000 done
+[sample] 1120/10000 done
+[sample] 1280/10000 done
+[sample] 1440/10000 done
+[sample] 1600/10000 done
+[sample] 1760/10000 done
+[sample] 1920/10000 done
+[sample] 2080/10000 done
+[sample] 2240/10000 done
+[sample] 2400/10000 done
+[sample] 2560/10000 done
+[sample] 2720/10000 done
+[sample] 2880/10000 done
+[sample] 3040/10000 done
+[sample] 3200/10000 done
+[sample] 3360/10000 done
+[sample] 3520/10000 done
+[sample] 3680/10000 done
+[sample] 3840/10000 done
+[sample] 4000/10000 done
+[sample] 4160/10000 done
+[sample] 4320/10000 done
+[sample] 4480/10000 done
+[sample] 4640/10000 done
+[sample] 4800/10000 done
+[sample] 4960/10000 done
+[sample] 5120/10000 done
+[sample] 5280/10000 done
+[sample] 5440/10000 done
+[sample] 5600/10000 done
+[sample] 5760/10000 done
+[sample] 5920/10000 done
+[sample] 6080/10000 done
+[sample] 6240/10000 done
+[sample] 6400/10000 done
+[sample] 6560/10000 done
+[sample] 6720/10000 done
+[sample] 6880/10000 done
+[sample] 7040/10000 done
+[sample] 7200/10000 done
+[sample] 7360/10000 done
+[sample] 7520/10000 done
+[sample] 7680/10000 done
+[sample] 7840/10000 done
+[sample] 8000/10000 done
+[sample] 8160/10000 done
+[sample] 8320/10000 done
+[sample] 8480/10000 done
+[sample] 8640/10000 done
+[sample] 8800/10000 done
+[sample] 8960/10000 done
+[sample] 9120/10000 done
+[sample] 9280/10000 done
+[sample] 9440/10000 done
+[sample] 9600/10000 done
+[sample] 9760/10000 done
+[sample] 9920/10000 done
+[sample] 10000/10000 done
+[fid] preparing 128x128 reals -> /home/maths/btech/mt1230785/scratch/col775_a2_hpc/samples/real_val_128
+compute FID between two folders
+Found 10000 images in the folder /home/maths/btech/mt1230785/scratch/col775_a2_hpc/samples/real_val_128
+Found 10000 images in the folder /home/maths/btech/mt1230785/scratch/col775_a2_hpc/samples/ldm_val
+[fid] LDM vs. val  FID = 18.437
+[done] sampling complete
+================================
+exit code : 0
+Thu Apr 23 14:59:43 IST 2026
+================================

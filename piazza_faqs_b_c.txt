@@ -1,0 +1,120 @@
+How is best performing vision encoder defined in Part B? The one with higher probe accuracy? Or should we train Stage 1 and pick the encoder with best accuracy for that?
+0
+Ashish Goswami  3 weeks ago
+You can take avg. of probe accuracies as the metric.
+0
+Resolved
+Anonymous Poet  2 weeks ago
+
+image.png
+
+would you be keeping the safetensors of Qwen Model in dataset folder or we will be uploading the safetensor we used to drive
+0
+Ashish Goswami  2 weeks ago
+
+Qwen/Qwen3-4B-Instruct-2507 will be cached locally (default directory: i.e ~/.cache/huggingface) , please don't upload it while submitting.
+
+However you must upload the LoRA weights of the finetuned LLM.
+0
+Anonymous Scale  5 days ago
+
+Could you also cache the FP8 version of the model?
+0
+Ashish Goswami  5 days ago
+Sure!
+0
+Resolved
+Aman Singh  1 week ago
+Jobs submitted to HPC are hanging in queue status and not getting started or showing stime in job full information. Can you help?
+0
+Ashish Goswami  1 week ago
+I'm not sure how we can help in this regard, jobs always takes longer to start due to more demand during assignment deadlines.
+0
+Aman Singh  1 week ago
+But is should have stime, like in assignment 1 when HPC was in demand but still getting stime of a week or so. Right now nothing is coming at all. Tried from other accounts also
+0
+Ashish Goswami  1 week ago
+
+Both of your jobs are actually scheduled to start today; they are not stuck, just waiting for resources to get available. You can use the command in the screenshot to check. That being said, it is completely dependent on HPC's job scheduling policy.
+
+As far as I know, stime gets populated once the job starts running. A better option is to look for estimated.start_time in the qstat -f job_id output.
+
+
+Screenshot_2026-04-27_at_7.28.58_AM.pngNaN
+0
+Unresolved
+Anonymous Helix  1 week ago
+Please release the exact submission guidelines since we won't be able to work on the assignment during the majors and this will create unnecessary rush in the end.
+3
+Resolved
+Anonymous Beaker  1 week ago
+Hello sir, can you also please let us know the tentative dates for viva of Assignment 2, since I have to reserve dates in early May for some plans.
+0
+Ashish Goswami  1 week ago
+We currently plan to take the demos on 8th.
+0
+Resolved
+Anonymous Gear  1 week ago
+for FID computation i got an error while running the default fid.compute_fid in clean-fid package due to near singular matrices. Can we use mode=legacy_pytorch to compute the fid instead, or can someone recommend another workaround?
+0
+Ashish Goswami  1 week ago
+Can you provide the complete trace of the error?
+0
+Anonymous Gear  6 days ago
+ValueError: array must not contain infs or NaNs
+
+
+If I change GPUs or pin to a single GPU using CUDA_VISIBLE_DEVICES, then it does not give this error.
+0
+Ashish Goswami  6 days ago
+The error doesn't make much sense on its own, it's trace would be helpful. But if setting the CUDA_VISIBLE_DEVICES helps, i'd suggest to proceed with it.
+0
+Resolved
+Aman Singh  1 week ago
+The assignment says the projector is "a 2-layer MLP with reverse-bottleneck" whose output must match the LLM hidden size (2560 for Qwen3-4B). In a reverse-bottleneck, the hidden layer is wider than input/output. What should the input dimension be — the number of patch tokens × patch feature dim, or just the per-token feature dim (384)? And what is the expected hidden layer size (e.g., 4×2560)?
+0
+Ashish Goswami  1 week ago
+1. The MLP projector operates per token independently much like the FFN in transformer, so the input dimension should match it (384 in your case).
+2. Common practice is to use have the up-projection 2x or 4x the size of LLM hidden dimension. You can choose either or experiment on this.
+0
+Resolved
+Anonymous Gear  1 week ago
+What is a good FID for part 3 for the VAE and LDM respectively? What components of model are we allowed to change for better representation power?
+0
+Resolved
+Anonymous Comp  7 days ago
+
+For part B, there are dev_images_ids_v0.7.10-recut.pkl, and train_images_ids_v0.7.10-recut.pkl files in this link, what are they being use for? 
+
+https://www.dropbox.com/scl/fo/ykzqa0x8xm0hjrha9arlo/AN_EMspNGId5i4lzIZRN-oU?rlkey=4h0r4rey9vgoo6g8nuud09b6t&e=2&dl=0
+0
+Ashish Goswami  7 days ago
+The explanations dataset is taken from CLEVR-X paper
+The .pkl files stores the list of image ids for which explanations exists.
+0
+Resolved
+Anonymous Gear  5 days ago
+
+On the recommended pytorch version(2.5) I am getting this issue:
+Traceback (most recent call last):
+  File "/home/sachit/A2/part_c_eval.py", line 265, in <module>
+    components, val_loader = setup_ldm_eval(args)
+  File "/home/sachit/A2/part_c_eval.py", line 110, in setup_ldm_eval
+    text_encoder = CLIPTextModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
+  File "/home/sachit/anaconda3/envs/dl/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4168, in from_pretrained
+    config, dtype = _get_dtype(
+  File "/home/sachit/anaconda3/envs/dl/lib/python3.10/site-packages/transformers/modeling_utils.py", line 848, in _get_dtype
+    state_dict = load_state_dict(
+  File "/home/sachit/anaconda3/envs/dl/lib/python3.10/site-packages/transformers/modeling_utils.py", line 374, in load_state_dict
+    check_torch_load_is_safe()
+  File "/home/sachit/anaconda3/envs/dl/lib/python3.10/site-packages/transformers/utils/import_utils.py", line 1357, in check_torch_load_is_safe
+    raise ValueError(
+ValueError: Due to a serious vulnerability issue in `torch.load`, even with `weights_only=True`, we now require users to upgrade torch to at least v2.6 in order to use the function. This version restriction does not apply when loading files with safetensors.
+
+
+Will the evaluation be done on PyTorch 2.5 only? 
+
+0
+Ashish Goswami  5 days ago
+Yes, we'll use torch2.5 for eval since this error originates from transformers a quick workaround is to downgrade it.
+transformers==4.49 or transformers==4.50 should work.

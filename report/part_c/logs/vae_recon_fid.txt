@@ -1,0 +1,4 @@
+fid=4.808
+real=/home/maths/btech/mt1230785/scratch/col775_a2_hpc/samples/real_val_128
+fake=/home/maths/btech/mt1230785/scratch/col775_a2_hpc/samples/vae_recon_val
+num_samples=10000

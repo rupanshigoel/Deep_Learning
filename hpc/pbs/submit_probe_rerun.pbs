@@ -1,0 +1,61 @@
+#!/bin/sh
+# Targeted re-run after the linear_probe.py + retrieval.py upgrades:
+#   * linear_probe now writes per-colour F1 CSVs + count confusion matrices
+#   * retrieval now writes per-row qualitative subfigures + failure-mode stats
+# Skips extract_embeddings (cached) and tsne_plot (local NPZs already re-used).
+# Expected wall-clock ~12 min; request 40 min on the high queue for safety.
+#PBS -N probe_rerun_clevr
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=00:40:00
+#PBS -o logs/probe_rerun.out
+#PBS -e logs/probe_rerun.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "node list : $(cat $PBS_NODEFILE)"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs plots plots/probe_analysis plots/retrieval_rows
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+nvidia-smi 2>/dev/null || true
+python -c "import torch; print('torch', torch.__version__, 'cuda?', torch.cuda.is_available())"
+
+# Sanity: need existing embeddings + CLIP checkpoint.
+for f in checkpoints/clip_last.pt \
+         embeddings/clip_train.npz embeddings/clip_val.npz \
+         embeddings/dino_student_train.npz embeddings/dino_student_val.npz \
+         embeddings/dino_teacher_train.npz embeddings/dino_teacher_val.npz; do
+    if [ ! -f "$f" ]; then
+        echo "[error] missing $f — required for rerun"
+        exit 1
+    fi
+done
+
+echo ">>> linear_probe (writes plots/probe_analysis/)"
+python -u -m col775_a2.linear_probe \
+    --emb-dir "$PBS_O_WORKDIR/embeddings" \
+    --out-dir "$PBS_O_WORKDIR/plots" \
+    --epochs  20
+
+echo ">>> retrieval (writes plots/retrieval_rows/ + plots/retrieval_stats.json)"
+python -u -m col775_a2.retrieval \
+    --clip-ckpt "$PBS_O_WORKDIR/checkpoints/clip_last.pt" \
+    --out-dir   "$PBS_O_WORKDIR/plots" \
+    --num-workers 6
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

@@ -1,0 +1,407 @@
+================================
+PBS jobid : 885596.pbshpc
+node list : aice009.hpc.iitd.ac.in
+workdir   : /home/maths/btech/mt1230785/scratch/col775_a2_hpc
+Thu Apr 23 19:21:57 IST 2026
+================================
+Thu Apr 23 19:22:06 2026       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.129.03             Driver Version: 535.129.03   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-PCIE-40GB          Off | 00000000:C0:00.0 Off |                    0 |
+| N/A   44C    P0              43W / 250W |      4MiB / 40960MiB |     38%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
+torch 2.5.0+cu118 cuda? True
+>>> extract_embeddings (train + val)
+[load] CLIP backbone from /home/maths/btech/mt1230785/scratch/col775_a2_hpc/checkpoints/clip_last.pt
+[load] DINO student from /home/maths/btech/mt1230785/scratch/col775_a2_hpc/checkpoints/dino_last.pt
+[load] DINO teacher from /home/maths/btech/mt1230785/scratch/col775_a2_hpc/checkpoints/dino_last.pt
+[extract] encoder=clip  split=train
+    [train] 2560/70000
+    [train] 5120/70000
+    [train] 7680/70000
+    [train] 10240/70000
+    [train] 12800/70000
+    [train] 15360/70000
+    [train] 17920/70000
+    [train] 20480/70000
+    [train] 23040/70000
+    [train] 25600/70000
+    [train] 28160/70000
+    [train] 30720/70000
+    [train] 33280/70000
+    [train] 35840/70000
+    [train] 38400/70000
+    [train] 40960/70000
+    [train] 43520/70000
+    [train] 46080/70000
+    [train] 48640/70000
+    [train] 51200/70000
+    [train] 53760/70000
+    [train] 56320/70000
+    [train] 58880/70000
+    [train] 61440/70000
+    [train] 64000/70000
+    [train] 66560/70000
+    [train] 69120/70000
+    [train] 70000/70000
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/embeddings/clip_train.npz  cls=(70000, 384)  gap=(70000, 384)
+[extract] encoder=clip  split=val
+    [val] 2560/15000
+    [val] 5120/15000
+    [val] 7680/15000
+    [val] 10240/15000
+    [val] 12800/15000
+    [val] 15000/15000
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/embeddings/clip_val.npz  cls=(15000, 384)  gap=(15000, 384)
+[extract] encoder=dino_student  split=train
+    [train] 2560/70000
+    [train] 5120/70000
+    [train] 7680/70000
+    [train] 10240/70000
+    [train] 12800/70000
+    [train] 15360/70000
+    [train] 17920/70000
+    [train] 20480/70000
+    [train] 23040/70000
+    [train] 25600/70000
+    [train] 28160/70000
+    [train] 30720/70000
+    [train] 33280/70000
+    [train] 35840/70000
+    [train] 38400/70000
+    [train] 40960/70000
+    [train] 43520/70000
+    [train] 46080/70000
+    [train] 48640/70000
+    [train] 51200/70000
+    [train] 53760/70000
+    [train] 56320/70000
+    [train] 58880/70000
+    [train] 61440/70000
+    [train] 64000/70000
+    [train] 66560/70000
+    [train] 69120/70000
+    [train] 70000/70000
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/embeddings/dino_student_train.npz  cls=(70000, 384)  gap=(70000, 384)
+[extract] encoder=dino_student  split=val
+    [val] 2560/15000
+    [val] 5120/15000
+    [val] 7680/15000
+    [val] 10240/15000
+    [val] 12800/15000
+    [val] 15000/15000
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/embeddings/dino_student_val.npz  cls=(15000, 384)  gap=(15000, 384)
+[extract] encoder=dino_teacher  split=train
+    [train] 2560/70000
+    [train] 5120/70000
+    [train] 7680/70000
+    [train] 10240/70000
+    [train] 12800/70000
+    [train] 15360/70000
+    [train] 17920/70000
+    [train] 20480/70000
+    [train] 23040/70000
+    [train] 25600/70000
+    [train] 28160/70000
+    [train] 30720/70000
+    [train] 33280/70000
+    [train] 35840/70000
+    [train] 38400/70000
+    [train] 40960/70000
+    [train] 43520/70000
+    [train] 46080/70000
+    [train] 48640/70000
+    [train] 51200/70000
+    [train] 53760/70000
+    [train] 56320/70000
+    [train] 58880/70000
+    [train] 61440/70000
+    [train] 64000/70000
+    [train] 66560/70000
+    [train] 69120/70000
+    [train] 70000/70000
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/embeddings/dino_teacher_train.npz  cls=(70000, 384)  gap=(70000, 384)
+[extract] encoder=dino_teacher  split=val
+    [val] 2560/15000
+    [val] 5120/15000
+    [val] 7680/15000
+    [val] 10240/15000
+    [val] 12800/15000
+    [val] 15000/15000
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/embeddings/dino_teacher_val.npz  cls=(15000, 384)  gap=(15000, 384)
+>>> linear_probe
+
+[probe] clip  pool=cls  X=(70000, 384)  count_classes=11
+
+[probe] clip  pool=gap  X=(70000, 384)  count_classes=11
+
+[probe] dino_student  pool=cls  X=(70000, 384)  count_classes=11
+
+[probe] dino_student  pool=gap  X=(70000, 384)  count_classes=11
+
+[probe] dino_teacher  pool=cls  X=(70000, 384)  count_classes=11
+
+[probe] dino_teacher  pool=gap  X=(70000, 384)  count_classes=11
+
+======================= Table 1 =======================
+Model         | CLS-count Tr/Va    | CLS-color Tr/Va    | GAP-count Tr/Va    | GAP-color Tr/Va
+----------------------------------------------------------------------------------------------
+CLIP          | 0.476 / 0.471   | 0.991 / 0.991   | 0.460 / 0.459   | 0.981 / 0.981
+DINO Student  | 0.609 / 0.596   | 0.938 / 0.938   | 0.671 / 0.662   | 0.931 / 0.930
+DINO Teacher  | 0.612 / 0.596   | 0.938 / 0.937   | 0.678 / 0.672   | 0.930 / 0.929
+>>> tsne_plot (full 70k train set)
+[tsne] clip: (70000, 384)
+[t-SNE] Computing 91 nearest neighbors...
+[t-SNE] Indexed 70000 samples in 0.010s...
+[t-SNE] Computed neighbors for 70000 samples in 89.735s...
+[t-SNE] Computed conditional probabilities for sample 1000 / 70000
+[t-SNE] Computed conditional probabilities for sample 2000 / 70000
+[t-SNE] Computed conditional probabilities for sample 3000 / 70000
+[t-SNE] Computed conditional probabilities for sample 4000 / 70000
+[t-SNE] Computed conditional probabilities for sample 5000 / 70000
+[t-SNE] Computed conditional probabilities for sample 6000 / 70000
+[t-SNE] Computed conditional probabilities for sample 7000 / 70000
+[t-SNE] Computed conditional probabilities for sample 8000 / 70000
+[t-SNE] Computed conditional probabilities for sample 9000 / 70000
+[t-SNE] Computed conditional probabilities for sample 10000 / 70000
+[t-SNE] Computed conditional probabilities for sample 11000 / 70000
+[t-SNE] Computed conditional probabilities for sample 12000 / 70000
+[t-SNE] Computed conditional probabilities for sample 13000 / 70000
+[t-SNE] Computed conditional probabilities for sample 14000 / 70000
+[t-SNE] Computed conditional probabilities for sample 15000 / 70000
+[t-SNE] Computed conditional probabilities for sample 16000 / 70000
+[t-SNE] Computed conditional probabilities for sample 17000 / 70000
+[t-SNE] Computed conditional probabilities for sample 18000 / 70000
+[t-SNE] Computed conditional probabilities for sample 19000 / 70000
+[t-SNE] Computed conditional probabilities for sample 20000 / 70000
+[t-SNE] Computed conditional probabilities for sample 21000 / 70000
+[t-SNE] Computed conditional probabilities for sample 22000 / 70000
+[t-SNE] Computed conditional probabilities for sample 23000 / 70000
+[t-SNE] Computed conditional probabilities for sample 24000 / 70000
+[t-SNE] Computed conditional probabilities for sample 25000 / 70000
+[t-SNE] Computed conditional probabilities for sample 26000 / 70000
+[t-SNE] Computed conditional probabilities for sample 27000 / 70000
+[t-SNE] Computed conditional probabilities for sample 28000 / 70000
+[t-SNE] Computed conditional probabilities for sample 29000 / 70000
+[t-SNE] Computed conditional probabilities for sample 30000 / 70000
+[t-SNE] Computed conditional probabilities for sample 31000 / 70000
+[t-SNE] Computed conditional probabilities for sample 32000 / 70000
+[t-SNE] Computed conditional probabilities for sample 33000 / 70000
+[t-SNE] Computed conditional probabilities for sample 34000 / 70000
+[t-SNE] Computed conditional probabilities for sample 35000 / 70000
+[t-SNE] Computed conditional probabilities for sample 36000 / 70000
+[t-SNE] Computed conditional probabilities for sample 37000 / 70000
+[t-SNE] Computed conditional probabilities for sample 38000 / 70000
+[t-SNE] Computed conditional probabilities for sample 39000 / 70000
+[t-SNE] Computed conditional probabilities for sample 40000 / 70000
+[t-SNE] Computed conditional probabilities for sample 41000 / 70000
+[t-SNE] Computed conditional probabilities for sample 42000 / 70000
+[t-SNE] Computed conditional probabilities for sample 43000 / 70000
+[t-SNE] Computed conditional probabilities for sample 44000 / 70000
+[t-SNE] Computed conditional probabilities for sample 45000 / 70000
+[t-SNE] Computed conditional probabilities for sample 46000 / 70000
+[t-SNE] Computed conditional probabilities for sample 47000 / 70000
+[t-SNE] Computed conditional probabilities for sample 48000 / 70000
+[t-SNE] Computed conditional probabilities for sample 49000 / 70000
+[t-SNE] Computed conditional probabilities for sample 50000 / 70000
+[t-SNE] Computed conditional probabilities for sample 51000 / 70000
+[t-SNE] Computed conditional probabilities for sample 52000 / 70000
+[t-SNE] Computed conditional probabilities for sample 53000 / 70000
+[t-SNE] Computed conditional probabilities for sample 54000 / 70000
+[t-SNE] Computed conditional probabilities for sample 55000 / 70000
+[t-SNE] Computed conditional probabilities for sample 56000 / 70000
+[t-SNE] Computed conditional probabilities for sample 57000 / 70000
+[t-SNE] Computed conditional probabilities for sample 58000 / 70000
+[t-SNE] Computed conditional probabilities for sample 59000 / 70000
+[t-SNE] Computed conditional probabilities for sample 60000 / 70000
+[t-SNE] Computed conditional probabilities for sample 61000 / 70000
+[t-SNE] Computed conditional probabilities for sample 62000 / 70000
+[t-SNE] Computed conditional probabilities for sample 63000 / 70000
+[t-SNE] Computed conditional probabilities for sample 64000 / 70000
+[t-SNE] Computed conditional probabilities for sample 65000 / 70000
+[t-SNE] Computed conditional probabilities for sample 66000 / 70000
+[t-SNE] Computed conditional probabilities for sample 67000 / 70000
+[t-SNE] Computed conditional probabilities for sample 68000 / 70000
+[t-SNE] Computed conditional probabilities for sample 69000 / 70000
+[t-SNE] Computed conditional probabilities for sample 70000 / 70000
+[t-SNE] Mean sigma: 4.225341
+[t-SNE] KL divergence after 250 iterations with early exaggeration: 119.350960
+[t-SNE] KL divergence after 1000 iterations: 4.264276
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/plots/tsne_clip_cls.png
+[tsne] dino_student: (70000, 384)
+[t-SNE] Computing 91 nearest neighbors...
+[t-SNE] Indexed 70000 samples in 0.011s...
+[t-SNE] Computed neighbors for 70000 samples in 90.590s...
+[t-SNE] Computed conditional probabilities for sample 1000 / 70000
+[t-SNE] Computed conditional probabilities for sample 2000 / 70000
+[t-SNE] Computed conditional probabilities for sample 3000 / 70000
+[t-SNE] Computed conditional probabilities for sample 4000 / 70000
+[t-SNE] Computed conditional probabilities for sample 5000 / 70000
+[t-SNE] Computed conditional probabilities for sample 6000 / 70000
+[t-SNE] Computed conditional probabilities for sample 7000 / 70000
+[t-SNE] Computed conditional probabilities for sample 8000 / 70000
+[t-SNE] Computed conditional probabilities for sample 9000 / 70000
+[t-SNE] Computed conditional probabilities for sample 10000 / 70000
+[t-SNE] Computed conditional probabilities for sample 11000 / 70000
+[t-SNE] Computed conditional probabilities for sample 12000 / 70000
+[t-SNE] Computed conditional probabilities for sample 13000 / 70000
+[t-SNE] Computed conditional probabilities for sample 14000 / 70000
+[t-SNE] Computed conditional probabilities for sample 15000 / 70000
+[t-SNE] Computed conditional probabilities for sample 16000 / 70000
+[t-SNE] Computed conditional probabilities for sample 17000 / 70000
+[t-SNE] Computed conditional probabilities for sample 18000 / 70000
+[t-SNE] Computed conditional probabilities for sample 19000 / 70000
+[t-SNE] Computed conditional probabilities for sample 20000 / 70000
+[t-SNE] Computed conditional probabilities for sample 21000 / 70000
+[t-SNE] Computed conditional probabilities for sample 22000 / 70000
+[t-SNE] Computed conditional probabilities for sample 23000 / 70000
+[t-SNE] Computed conditional probabilities for sample 24000 / 70000
+[t-SNE] Computed conditional probabilities for sample 25000 / 70000
+[t-SNE] Computed conditional probabilities for sample 26000 / 70000
+[t-SNE] Computed conditional probabilities for sample 27000 / 70000
+[t-SNE] Computed conditional probabilities for sample 28000 / 70000
+[t-SNE] Computed conditional probabilities for sample 29000 / 70000
+[t-SNE] Computed conditional probabilities for sample 30000 / 70000
+[t-SNE] Computed conditional probabilities for sample 31000 / 70000
+[t-SNE] Computed conditional probabilities for sample 32000 / 70000
+[t-SNE] Computed conditional probabilities for sample 33000 / 70000
+[t-SNE] Computed conditional probabilities for sample 34000 / 70000
+[t-SNE] Computed conditional probabilities for sample 35000 / 70000
+[t-SNE] Computed conditional probabilities for sample 36000 / 70000
+[t-SNE] Computed conditional probabilities for sample 37000 / 70000
+[t-SNE] Computed conditional probabilities for sample 38000 / 70000
+[t-SNE] Computed conditional probabilities for sample 39000 / 70000
+[t-SNE] Computed conditional probabilities for sample 40000 / 70000
+[t-SNE] Computed conditional probabilities for sample 41000 / 70000
+[t-SNE] Computed conditional probabilities for sample 42000 / 70000
+[t-SNE] Computed conditional probabilities for sample 43000 / 70000
+[t-SNE] Computed conditional probabilities for sample 44000 / 70000
+[t-SNE] Computed conditional probabilities for sample 45000 / 70000
+[t-SNE] Computed conditional probabilities for sample 46000 / 70000
+[t-SNE] Computed conditional probabilities for sample 47000 / 70000
+[t-SNE] Computed conditional probabilities for sample 48000 / 70000
+[t-SNE] Computed conditional probabilities for sample 49000 / 70000
+[t-SNE] Computed conditional probabilities for sample 50000 / 70000
+[t-SNE] Computed conditional probabilities for sample 51000 / 70000
+[t-SNE] Computed conditional probabilities for sample 52000 / 70000
+[t-SNE] Computed conditional probabilities for sample 53000 / 70000
+[t-SNE] Computed conditional probabilities for sample 54000 / 70000
+[t-SNE] Computed conditional probabilities for sample 55000 / 70000
+[t-SNE] Computed conditional probabilities for sample 56000 / 70000
+[t-SNE] Computed conditional probabilities for sample 57000 / 70000
+[t-SNE] Computed conditional probabilities for sample 58000 / 70000
+[t-SNE] Computed conditional probabilities for sample 59000 / 70000
+[t-SNE] Computed conditional probabilities for sample 60000 / 70000
+[t-SNE] Computed conditional probabilities for sample 61000 / 70000
+[t-SNE] Computed conditional probabilities for sample 62000 / 70000
+[t-SNE] Computed conditional probabilities for sample 63000 / 70000
+[t-SNE] Computed conditional probabilities for sample 64000 / 70000
+[t-SNE] Computed conditional probabilities for sample 65000 / 70000
+[t-SNE] Computed conditional probabilities for sample 66000 / 70000
+[t-SNE] Computed conditional probabilities for sample 67000 / 70000
+[t-SNE] Computed conditional probabilities for sample 68000 / 70000
+[t-SNE] Computed conditional probabilities for sample 69000 / 70000
+[t-SNE] Computed conditional probabilities for sample 70000 / 70000
+[t-SNE] Mean sigma: 4.824797
+[t-SNE] KL divergence after 250 iterations with early exaggeration: 99.634850
+[t-SNE] KL divergence after 1000 iterations: 2.541143
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/plots/tsne_dino_student_cls.png
+[tsne] dino_teacher: (70000, 384)
+[t-SNE] Computing 91 nearest neighbors...
+[t-SNE] Indexed 70000 samples in 0.010s...
+[t-SNE] Computed neighbors for 70000 samples in 89.607s...
+[t-SNE] Computed conditional probabilities for sample 1000 / 70000
+[t-SNE] Computed conditional probabilities for sample 2000 / 70000
+[t-SNE] Computed conditional probabilities for sample 3000 / 70000
+[t-SNE] Computed conditional probabilities for sample 4000 / 70000
+[t-SNE] Computed conditional probabilities for sample 5000 / 70000
+[t-SNE] Computed conditional probabilities for sample 6000 / 70000
+[t-SNE] Computed conditional probabilities for sample 7000 / 70000
+[t-SNE] Computed conditional probabilities for sample 8000 / 70000
+[t-SNE] Computed conditional probabilities for sample 9000 / 70000
+[t-SNE] Computed conditional probabilities for sample 10000 / 70000
+[t-SNE] Computed conditional probabilities for sample 11000 / 70000
+[t-SNE] Computed conditional probabilities for sample 12000 / 70000
+[t-SNE] Computed conditional probabilities for sample 13000 / 70000
+[t-SNE] Computed conditional probabilities for sample 14000 / 70000
+[t-SNE] Computed conditional probabilities for sample 15000 / 70000
+[t-SNE] Computed conditional probabilities for sample 16000 / 70000
+[t-SNE] Computed conditional probabilities for sample 17000 / 70000
+[t-SNE] Computed conditional probabilities for sample 18000 / 70000
+[t-SNE] Computed conditional probabilities for sample 19000 / 70000
+[t-SNE] Computed conditional probabilities for sample 20000 / 70000
+[t-SNE] Computed conditional probabilities for sample 21000 / 70000
+[t-SNE] Computed conditional probabilities for sample 22000 / 70000
+[t-SNE] Computed conditional probabilities for sample 23000 / 70000
+[t-SNE] Computed conditional probabilities for sample 24000 / 70000
+[t-SNE] Computed conditional probabilities for sample 25000 / 70000
+[t-SNE] Computed conditional probabilities for sample 26000 / 70000
+[t-SNE] Computed conditional probabilities for sample 27000 / 70000
+[t-SNE] Computed conditional probabilities for sample 28000 / 70000
+[t-SNE] Computed conditional probabilities for sample 29000 / 70000
+[t-SNE] Computed conditional probabilities for sample 30000 / 70000
+[t-SNE] Computed conditional probabilities for sample 31000 / 70000
+[t-SNE] Computed conditional probabilities for sample 32000 / 70000
+[t-SNE] Computed conditional probabilities for sample 33000 / 70000
+[t-SNE] Computed conditional probabilities for sample 34000 / 70000
+[t-SNE] Computed conditional probabilities for sample 35000 / 70000
+[t-SNE] Computed conditional probabilities for sample 36000 / 70000
+[t-SNE] Computed conditional probabilities for sample 37000 / 70000
+[t-SNE] Computed conditional probabilities for sample 38000 / 70000
+[t-SNE] Computed conditional probabilities for sample 39000 / 70000
+[t-SNE] Computed conditional probabilities for sample 40000 / 70000
+[t-SNE] Computed conditional probabilities for sample 41000 / 70000
+[t-SNE] Computed conditional probabilities for sample 42000 / 70000
+[t-SNE] Computed conditional probabilities for sample 43000 / 70000
+[t-SNE] Computed conditional probabilities for sample 44000 / 70000
+[t-SNE] Computed conditional probabilities for sample 45000 / 70000
+[t-SNE] Computed conditional probabilities for sample 46000 / 70000
+[t-SNE] Computed conditional probabilities for sample 47000 / 70000
+[t-SNE] Computed conditional probabilities for sample 48000 / 70000
+[t-SNE] Computed conditional probabilities for sample 49000 / 70000
+[t-SNE] Computed conditional probabilities for sample 50000 / 70000
+[t-SNE] Computed conditional probabilities for sample 51000 / 70000
+[t-SNE] Computed conditional probabilities for sample 52000 / 70000
+[t-SNE] Computed conditional probabilities for sample 53000 / 70000
+[t-SNE] Computed conditional probabilities for sample 54000 / 70000
+[t-SNE] Computed conditional probabilities for sample 55000 / 70000
+[t-SNE] Computed conditional probabilities for sample 56000 / 70000
+[t-SNE] Computed conditional probabilities for sample 57000 / 70000
+[t-SNE] Computed conditional probabilities for sample 58000 / 70000
+[t-SNE] Computed conditional probabilities for sample 59000 / 70000
+[t-SNE] Computed conditional probabilities for sample 60000 / 70000
+[t-SNE] Computed conditional probabilities for sample 61000 / 70000
+[t-SNE] Computed conditional probabilities for sample 62000 / 70000
+[t-SNE] Computed conditional probabilities for sample 63000 / 70000
+[t-SNE] Computed conditional probabilities for sample 64000 / 70000
+[t-SNE] Computed conditional probabilities for sample 65000 / 70000
+[t-SNE] Computed conditional probabilities for sample 66000 / 70000
+[t-SNE] Computed conditional probabilities for sample 67000 / 70000
+[t-SNE] Computed conditional probabilities for sample 68000 / 70000
+[t-SNE] Computed conditional probabilities for sample 69000 / 70000
+[t-SNE] Computed conditional probabilities for sample 70000 / 70000
+[t-SNE] Mean sigma: 4.732600
+[t-SNE] KL divergence after 250 iterations with early exaggeration: 99.835480
+[t-SNE] KL divergence after 1000 iterations: 2.530281
+  wrote /home/maths/btech/mt1230785/scratch/col775_a2_hpc/plots/tsne_dino_teacher_cls.png
+>>> retrieval
+[retrieval] 15000 val (image, caption) pairs
+[retrieval] CLIP loaded (32.7M params)
+================================
+exit code : 0
+Thu Apr 23 20:18:11 IST 2026
+================================

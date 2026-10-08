@@ -1,0 +1,4 @@
+CLEVR_new_val_000000.png	An image with 10 objects: 1 large green metal cube, 3 large purple metal cylinders, 1 large purple rubber cube, 1 large red rubber cube, 1 large yellow rubber cube, 1 small cyan metal cube, 1 small green metal sphere, 1 small yellow rubber cylinder
+CLEVR_new_val_000001.png	An image with 7 objects: 1 large brown rubber cube, 1 large brown rubber sphere, 1 large gray metal cylinder, 1 large gray rubber cube, 1 large red rubber sphere, 1 small purple metal cube, 1 small purple rubber cylinder
+CLEVR_new_val_000002.png	An image with 5 objects: 1 large cyan rubber sphere, 1 large green metal sphere, 1 small brown metal sphere, 1 small cyan metal cube, 1 small yellow metal cube
+CLEVR_new_val_000003.png	An image with 6 objects: 1 large brown rubber sphere, 1 large gray metal sphere, 1 large gray rubber cube, 1 large green metal cylinder, 1 small purple rubber sphere, 1 small red rubber cylinder

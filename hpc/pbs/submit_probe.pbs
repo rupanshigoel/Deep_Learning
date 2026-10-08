@@ -1,0 +1,64 @@
+#!/bin/sh
+#PBS -N probe_clevr
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=16:ngpus=1:centos=icelake
+#PBS -l walltime=04:00:00
+#PBS -o logs/probe.out
+#PBS -e logs/probe.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "node list : $(cat $PBS_NODEFILE)"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs embeddings plots
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+nvidia-smi 2>/dev/null || true
+python -c "import torch; print('torch', torch.__version__, 'cuda?', torch.cuda.is_available())"
+
+# Requires checkpoints/clip_last.pt and checkpoints/dino_last.pt to exist.
+if [ ! -f checkpoints/clip_last.pt ] || [ ! -f checkpoints/dino_last.pt ]; then
+    echo "[error] missing checkpoints. Run submit_clip.pbs and submit_dino.pbs first."
+    exit 1
+fi
+
+echo ">>> extract_embeddings (train + val)"
+python -u -m col775_a2.extract_embeddings \
+    --clip-ckpt "$PBS_O_WORKDIR/checkpoints/clip_last.pt" \
+    --dino-ckpt "$PBS_O_WORKDIR/checkpoints/dino_last.pt" \
+    --out-dir   "$PBS_O_WORKDIR/embeddings" \
+    --splits train val \
+    --num-workers 12
+
+echo ">>> linear_probe"
+python -u -m col775_a2.linear_probe \
+    --emb-dir "$PBS_O_WORKDIR/embeddings" \
+    --epochs  30
+
+echo ">>> tsne_plot (full 70k train set)"
+python -u -m col775_a2.tsne_plot \
+    --emb-dir "$PBS_O_WORKDIR/embeddings" \
+    --out-dir "$PBS_O_WORKDIR/plots" \
+    --split   train
+
+echo ">>> retrieval"
+python -u -m col775_a2.retrieval \
+    --clip-ckpt "$PBS_O_WORKDIR/checkpoints/clip_last.pt" \
+    --out-dir   "$PBS_O_WORKDIR/plots" \
+    --num-workers 12
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

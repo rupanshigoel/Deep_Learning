@@ -1,0 +1,38 @@
+#!/bin/sh
+# Compute per-channel mean/std of VAE posterior latents over the Part_A train
+# split. Writes checkpoints/latent_stats.pt. Should take <15 min on A100.
+#PBS -N vae_latstats
+#PBS -P col775.mt1230785.course
+#PBS -q standard
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=01:00:00
+#PBS -o logs/latstats.out
+#PBS -e logs/latstats.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.compute_latent_stats \
+    --data-root "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir  "$PBS_O_WORKDIR/checkpoints" \
+    --batch-size 128 \
+    --num-workers 8
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

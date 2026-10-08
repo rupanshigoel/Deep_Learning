@@ -1,0 +1,69 @@
+#!/bin/sh
+# Parameterised LDM FID job for the CFG-scale ablation table.
+#
+# Required submit-time vars (passed via `qsub -v CFG_S=2.0,TAG=s2 ...`):
+#   CFG_S : guidance scale (e.g. 0.0, 1.0, 2.0, 7.5)
+#   TAG   : short string used in the output dir name (e.g. s0, s1, s2, s7p5)
+#
+# Writes:
+#   samples/ldm_val_${TAG}/      generated PNGs + fid.txt
+#   logs/ldm_fid_${TAG}.{out,err}
+#
+# Each job: 10k val captions x 500 DDPM steps x CFG (2 fwd / step) -> ~2 h on A100.
+#PBS -N ldm_fid_cfg
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=03:00:00
+
+# Default the parameters so the script is still standalone-runnable for testing.
+: ${CFG_S:=4.0}
+: ${TAG:=s4}
+
+# Redirect stdio AFTER we know TAG (PBS -o/-e can't reference vars).
+exec >  "$PBS_O_WORKDIR/logs/ldm_fid_${TAG}.out" 2>&1
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+echo "CFG_S=$CFG_S  TAG=$TAG"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs samples
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+export HF_HOME="$PBS_O_WORKDIR/hf_cache"
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+
+# Pre-place clean-fid Inception weights so the eval doesn't try to download.
+if [ -f "$PBS_O_WORKDIR/cleanfid_cache/inception-2015-12-05.pt" ]; then
+    cp -f "$PBS_O_WORKDIR/cleanfid_cache/inception-2015-12-05.pt" /tmp/inception-2015-12-05.pt
+    echo "[cleanfid] placed Inception weights at /tmp/inception-2015-12-05.pt"
+fi
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.sample_ldm \
+    --data-root   "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir    "$PBS_O_WORKDIR/checkpoints" \
+    --out-dir     "$PBS_O_WORKDIR/samples/ldm_val_${TAG}" \
+    --real-dir    "$PBS_O_WORKDIR/samples/real_val_128" \
+    --clip-path   "openai/clip-vit-base-patch32" \
+    --num-workers 4 \
+    --batch-size  16 \
+    --guidance    ${CFG_S} \
+    --timesteps   500 \
+    --full --fid
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

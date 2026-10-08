@@ -1,0 +1,47 @@
+#!/bin/sh
+# 15-min VLM smoke test: model build, 20 Stage-1 train steps, generation sanity,
+# 10 Stage-2 train steps with LoRA. Asserts projector-only trainability in S1,
+# LoRA isolation in S2, and decodable generate output. Fails fast.
+#PBS -N vlm_smoke
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=00:20:00
+#PBS -o logs/vlm_smoke.out
+#PBS -e logs/vlm_smoke.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "node list : $(cat $PBS_NODEFILE)"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+export HF_HOME="$PBS_O_WORKDIR/archive/hf_cache"
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+
+nvidia-smi 2>/dev/null || true
+python -c "import torch, transformers, peft; print('torch', torch.__version__, 'transformers', transformers.__version__, 'peft', peft.__version__)"
+
+python -u -m col775_a2.smoke_vlm \
+    --dino-ckpt           "$PBS_O_WORKDIR/checkpoints/dino_final.pt" \
+    --qwen-path           "Qwen/Qwen3-4B-Instruct-2507" \
+    --captions-json       "$PBS_O_WORKDIR/A2_dataset/Part_Aa/Clevr_official/captions/clevr_train_captions.json" \
+    --captions-images-dir "$PBS_O_WORKDIR/A2_dataset/Part_Aa/Clevr_official/images/train" \
+    --clevrx-json         "$PBS_O_WORKDIR/A2_dataset/Part_B/CLEVR_X/CLEVR_train_explanations_v0.7.10.json" \
+    --clevrx-images-dir   "$PBS_O_WORKDIR/A2_dataset/Part_Aa/Clevr_official/images/train" \
+    --recut-pkl           "$PBS_O_WORKDIR/A2_dataset/Part_B/CLEVR_X/train_images_ids_v0.7.10-recut.pkl"
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

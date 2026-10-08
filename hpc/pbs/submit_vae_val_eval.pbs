@@ -1,0 +1,41 @@
+#!/bin/sh
+# One-shot VAE val pass on the trained vae_last.pt to recover the (val_loss,
+# val_recon, val_kl) tuple at the final epoch — without retraining.
+# 10K val images at bs=64 -> ~5 min on A100.
+#PBS -N vae_val_eval
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=00:30:00
+#PBS -o logs/vae_val_eval.out
+#PBS -e logs/vae_val_eval.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.eval_vae_val \
+    --data-root "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir  "$PBS_O_WORKDIR/checkpoints" \
+    --log-dir   "$PBS_O_WORKDIR/logs" \
+    --batch-size 64 \
+    --num-workers 8 \
+    --backfill-csv
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

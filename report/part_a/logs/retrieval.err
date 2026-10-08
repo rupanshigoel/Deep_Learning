@@ -1,0 +1,2 @@
+/scratch/maths/btech/mt1230785/col775_a2_hpc/col775_a2/retrieval.py:150: UserWarning: Tight layout not applied. tight_layout cannot make Axes width small enough to accommodate all Axes decorations
+  fig.suptitle(f"Text -> Image retrieval ({tag})"); fig.tight_layout()

@@ -1,0 +1,48 @@
+#!/bin/sh
+# Diversity grid (4 captions x 4 seeds) + CFG ablation (4 captions x 5 scales).
+# Each cell is one full 500-step DDPM x2 (CFG) sample, batched per row.
+# 4 captions per row, 9 rows total, ~30s/row on A100 -> <30 min total.
+#PBS -N ldm_ablations
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=01:30:00
+#PBS -o logs/ldm_ablations.out
+#PBS -e logs/ldm_ablations.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs samples_ablation
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+export HF_HOME="$PBS_O_WORKDIR/hf_cache"
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.sample_ablations \
+    --data-root   "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir    "$PBS_O_WORKDIR/checkpoints" \
+    --out-dir     "$PBS_O_WORKDIR/samples_ablation" \
+    --clip-path   "openai/clip-vit-base-patch32" \
+    --num-captions 4 \
+    --num-seeds   4 \
+    --cfg-scales  "0,1,2,4,7.5" \
+    --diversity-cfg 4.0 \
+    --timesteps   500
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

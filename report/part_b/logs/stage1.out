@@ -1,0 +1,146 @@
+================================
+PBS jobid : 886213.pbshpc
+node list : aice008.hpc.iitd.ac.in
+Fri Apr 24 00:38:34 IST 2026
+================================
+Fri Apr 24 00:38:38 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.90.07              Driver Version: 550.90.07      CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          Off |   00000000:2B:00.0 Off |                    0 |
+| N/A   35C    P0             43W /  250W |       1MiB /  40960MiB |      4%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+torch 2.5.0+cu118 cuda? True
+[s1] Building VLM…
+[s1] trainable params: {'projector': 4526080, 'lora': 0, 'vit': 0, 'llm_other': 0} | total = 4,526,080
+[s1] Loading training captions…
+[s1] train size: 70000
+[s1] steps_per_epoch=2187  total_steps=2187  warmup=65
+[s1] Training started.
+[s1] step 20/2187  loss=2.2172  lr=3.08e-04  tok/s=419  t=1.3m
+[s1] step 40/2187  loss=0.9273  lr=6.15e-04  tok/s=422  t=2.6m
+[s1] step 60/2187  loss=0.5809  lr=9.23e-04  tok/s=421  t=3.9m
+[s1] step 80/2187  loss=0.4930  lr=1.00e-03  tok/s=422  t=5.2m
+[s1] step 100/2187  loss=0.4486  lr=9.99e-04  tok/s=425  t=6.5m
+[s1] step 120/2187  loss=0.4344  lr=9.98e-04  tok/s=425  t=7.7m
+[s1] step 140/2187  loss=0.4039  lr=9.97e-04  tok/s=425  t=9.0m
+[s1] step 160/2187  loss=0.3687  lr=9.95e-04  tok/s=426  t=10.3m
+[s1] step 180/2187  loss=0.3140  lr=9.93e-04  tok/s=426  t=11.6m
+[s1] step 200/2187  loss=0.2542  lr=9.91e-04  tok/s=426  t=12.9m
+[s1] step 220/2187  loss=0.2081  lr=9.88e-04  tok/s=426  t=14.2m
+[s1] step 240/2187  loss=0.1846  lr=9.84e-04  tok/s=426  t=15.5m
+[s1] step 260/2187  loss=0.1641  lr=9.80e-04  tok/s=426  t=16.7m
+[s1] step 280/2187  loss=0.1521  lr=9.76e-04  tok/s=426  t=18.0m
+[s1] step 300/2187  loss=0.1351  lr=9.72e-04  tok/s=426  t=19.3m
+[s1] step 320/2187  loss=0.1276  lr=9.67e-04  tok/s=425  t=20.6m
+[s1] step 340/2187  loss=0.1239  lr=9.61e-04  tok/s=425  t=21.9m
+[s1] step 360/2187  loss=0.1104  lr=9.55e-04  tok/s=425  t=23.2m
+[s1] step 380/2187  loss=0.1152  lr=9.49e-04  tok/s=424  t=24.5m
+[s1] step 400/2187  loss=0.1066  lr=9.43e-04  tok/s=424  t=25.8m
+[s1] step 420/2187  loss=0.1037  lr=9.36e-04  tok/s=424  t=27.1m
+[s1] step 440/2187  loss=0.0981  lr=9.29e-04  tok/s=424  t=28.4m
+[s1] step 460/2187  loss=0.0961  lr=9.21e-04  tok/s=424  t=29.7m
+[s1] step 480/2187  loss=0.0974  lr=9.13e-04  tok/s=424  t=30.9m
+[s1] step 500/2187  loss=0.0928  lr=9.05e-04  tok/s=425  t=32.2m
+[s1] step 520/2187  loss=0.0913  lr=8.96e-04  tok/s=425  t=33.5m
+[s1] step 540/2187  loss=0.0881  lr=8.87e-04  tok/s=425  t=34.8m
+[s1] step 560/2187  loss=0.0855  lr=8.78e-04  tok/s=425  t=36.0m
+[s1] step 580/2187  loss=0.0864  lr=8.68e-04  tok/s=425  t=37.3m
+[s1] step 600/2187  loss=0.0894  lr=8.59e-04  tok/s=425  t=38.6m
+[s1] step 620/2187  loss=0.0883  lr=8.48e-04  tok/s=425  t=39.9m
+[s1] step 640/2187  loss=0.0787  lr=8.38e-04  tok/s=425  t=41.2m
+[s1] step 660/2187  loss=0.0809  lr=8.27e-04  tok/s=425  t=42.5m
+[s1] step 680/2187  loss=0.0777  lr=8.16e-04  tok/s=424  t=43.8m
+[s1] step 700/2187  loss=0.0817  lr=8.05e-04  tok/s=425  t=45.1m
+[s1] step 720/2187  loss=0.0799  lr=7.94e-04  tok/s=425  t=46.4m
+[s1] step 740/2187  loss=0.0764  lr=7.82e-04  tok/s=425  t=47.6m
+[s1] step 760/2187  loss=0.0730  lr=7.70e-04  tok/s=425  t=48.9m
+[s1] step 780/2187  loss=0.0709  lr=7.58e-04  tok/s=425  t=50.2m
+[s1] step 800/2187  loss=0.0701  lr=7.45e-04  tok/s=425  t=51.5m
+[s1] step 820/2187  loss=0.0723  lr=7.33e-04  tok/s=425  t=52.8m
+[s1] step 840/2187  loss=0.0665  lr=7.20e-04  tok/s=425  t=54.1m
+[s1] step 860/2187  loss=0.0722  lr=7.07e-04  tok/s=425  t=55.4m
+[s1] step 880/2187  loss=0.0688  lr=6.94e-04  tok/s=425  t=56.6m
+[s1] step 900/2187  loss=0.0668  lr=6.81e-04  tok/s=425  t=57.9m
+[s1] step 920/2187  loss=0.0664  lr=6.68e-04  tok/s=425  t=59.2m
+[s1] step 940/2187  loss=0.0646  lr=6.54e-04  tok/s=425  t=60.5m
+[s1] step 960/2187  loss=0.0651  lr=6.41e-04  tok/s=425  t=61.8m
+[s1] step 980/2187  loss=0.0614  lr=6.27e-04  tok/s=425  t=63.1m
+[s1] step 1000/2187  loss=0.0667  lr=6.13e-04  tok/s=425  t=64.4m
+[s1] step 1020/2187  loss=0.0623  lr=5.99e-04  tok/s=423  t=66.0m
+[s1] step 1040/2187  loss=0.0623  lr=5.85e-04  tok/s=423  t=67.2m
+[s1] step 1060/2187  loss=0.0599  lr=5.71e-04  tok/s=423  t=68.5m
+[s1] step 1080/2187  loss=0.0629  lr=5.57e-04  tok/s=423  t=69.8m
+[s1] step 1100/2187  loss=0.0572  lr=5.43e-04  tok/s=423  t=71.1m
+[s1] step 1120/2187  loss=0.0613  lr=5.29e-04  tok/s=423  t=72.4m
+[s1] step 1140/2187  loss=0.0615  lr=5.15e-04  tok/s=423  t=73.7m
+[s1] step 1160/2187  loss=0.0610  lr=5.01e-04  tok/s=423  t=75.0m
+[s1] step 1180/2187  loss=0.0591  lr=4.87e-04  tok/s=423  t=76.3m
+[s1] step 1200/2187  loss=0.0569  lr=4.73e-04  tok/s=423  t=77.6m
+[s1] step 1220/2187  loss=0.0593  lr=4.59e-04  tok/s=423  t=78.8m
+[s1] step 1240/2187  loss=0.0576  lr=4.45e-04  tok/s=423  t=80.1m
+[s1] step 1260/2187  loss=0.0578  lr=4.31e-04  tok/s=423  t=81.4m
+[s1] step 1280/2187  loss=0.0540  lr=4.18e-04  tok/s=424  t=82.7m
+[s1] step 1300/2187  loss=0.0544  lr=4.04e-04  tok/s=424  t=84.0m
+[s1] step 1320/2187  loss=0.0538  lr=3.90e-04  tok/s=424  t=85.2m
+[s1] step 1340/2187  loss=0.0531  lr=3.77e-04  tok/s=424  t=86.5m
+[s1] step 1360/2187  loss=0.0516  lr=3.64e-04  tok/s=424  t=87.8m
+[s1] step 1380/2187  loss=0.0565  lr=3.51e-04  tok/s=424  t=89.1m
+[s1] step 1400/2187  loss=0.0520  lr=3.38e-04  tok/s=424  t=90.4m
+[s1] step 1420/2187  loss=0.0503  lr=3.25e-04  tok/s=423  t=91.7m
+[s1] step 1440/2187  loss=0.0537  lr=3.12e-04  tok/s=423  t=93.0m
+[s1] step 1460/2187  loss=0.0509  lr=3.00e-04  tok/s=423  t=94.3m
+[s1] step 1480/2187  loss=0.0471  lr=2.87e-04  tok/s=423  t=95.5m
+[s1] step 1500/2187  loss=0.0503  lr=2.75e-04  tok/s=423  t=96.8m
+[s1] step 1520/2187  loss=0.0485  lr=2.63e-04  tok/s=423  t=98.1m
+[s1] step 1540/2187  loss=0.0522  lr=2.52e-04  tok/s=423  t=99.4m
+[s1] step 1560/2187  loss=0.0479  lr=2.40e-04  tok/s=423  t=100.7m
+[s1] step 1580/2187  loss=0.0516  lr=2.29e-04  tok/s=423  t=102.0m
+[s1] step 1600/2187  loss=0.0469  lr=2.18e-04  tok/s=424  t=103.2m
+[s1] step 1620/2187  loss=0.0490  lr=2.08e-04  tok/s=424  t=104.5m
+[s1] step 1640/2187  loss=0.0457  lr=1.97e-04  tok/s=424  t=105.8m
+[s1] step 1660/2187  loss=0.0461  lr=1.87e-04  tok/s=424  t=107.1m
+[s1] step 1680/2187  loss=0.0429  lr=1.78e-04  tok/s=424  t=108.4m
+[s1] step 1700/2187  loss=0.0476  lr=1.68e-04  tok/s=424  t=109.6m
+[s1] step 1720/2187  loss=0.0409  lr=1.59e-04  tok/s=424  t=110.9m
+[s1] step 1740/2187  loss=0.0480  lr=1.50e-04  tok/s=424  t=112.2m
+[s1] step 1760/2187  loss=0.0447  lr=1.42e-04  tok/s=424  t=113.5m
+[s1] step 1780/2187  loss=0.0453  lr=1.34e-04  tok/s=424  t=114.8m
+[s1] step 1800/2187  loss=0.0422  lr=1.26e-04  tok/s=424  t=116.1m
+[s1] step 1820/2187  loss=0.0438  lr=1.18e-04  tok/s=424  t=117.3m
+[s1] step 1840/2187  loss=0.0419  lr=1.11e-04  tok/s=424  t=118.6m
+[s1] step 1860/2187  loss=0.0448  lr=1.05e-04  tok/s=424  t=119.9m
+[s1] step 1880/2187  loss=0.0422  lr=9.82e-05  tok/s=424  t=121.2m
+[s1] step 1900/2187  loss=0.0433  lr=9.22e-05  tok/s=424  t=122.5m
+[s1] step 1920/2187  loss=0.0434  lr=8.66e-05  tok/s=424  t=123.8m
+[s1] step 1940/2187  loss=0.0457  lr=8.14e-05  tok/s=424  t=125.0m
+[s1] step 1960/2187  loss=0.0434  lr=7.66e-05  tok/s=424  t=126.3m
+[s1] step 1980/2187  loss=0.0417  lr=7.21e-05  tok/s=424  t=127.6m
+[s1] step 2000/2187  loss=0.0416  lr=6.81e-05  tok/s=424  t=128.9m
+[s1] step 2020/2187  loss=0.0426  lr=6.44e-05  tok/s=423  t=130.4m
+[s1] step 2040/2187  loss=0.0408  lr=6.12e-05  tok/s=423  t=131.7m
+[s1] step 2060/2187  loss=0.0453  lr=5.84e-05  tok/s=423  t=132.9m
+[s1] step 2080/2187  loss=0.0452  lr=5.59e-05  tok/s=423  t=134.2m
+[s1] step 2100/2187  loss=0.0397  lr=5.39e-05  tok/s=423  t=135.5m
+[s1] step 2120/2187  loss=0.0431  lr=5.23e-05  tok/s=423  t=136.8m
+[s1] step 2140/2187  loss=0.0411  lr=5.11e-05  tok/s=423  t=138.1m
+[s1] step 2160/2187  loss=0.0409  lr=5.04e-05  tok/s=423  t=139.4m
+[s1] step 2180/2187  loss=0.0435  lr=5.00e-05  tok/s=423  t=140.7m
+[s1] Training complete at step 2187. Saved vlm_stage1_final.pt + vlm_stage1_projector.pt.
+================================
+exit code : 0
+Fri Apr 24 03:00:57 IST 2026
+================================

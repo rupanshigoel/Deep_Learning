@@ -1,0 +1,39 @@
+#!/bin/sh
+# Stage-2 FULL-DATA training, chunk 9/11: data slice [509088, 572724) — HIGH queue (5x cost) for fast turnaround.
+#PBS -N vlm_s2_full_c9
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=16:ngpus=1:centos=icelake
+#PBS -l walltime=05:00:00
+#PBS -o logs/vlm_s2_full_c9.out
+#PBS -e logs/vlm_s2_full_c9.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID  chunk 9/11 (HIGH queue)"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs/full checkpoints/full
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+export HF_HOME="$PBS_O_WORKDIR/archive/hf_cache"
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.train_vlm_stage2     --clevrx-json  "$PBS_O_WORKDIR/A2_dataset/Part_B/CLEVR_X/CLEVR_train_explanations_v0.7.10.json"     --recut-pkl    "$PBS_O_WORKDIR/A2_dataset/Part_B/CLEVR_X/train_images_ids_v0.7.10-recut.pkl"     --images-dir   "$PBS_O_WORKDIR/A2_dataset/Part_Aa/Clevr_official/images/train"     --dino-ckpt    "$PBS_O_WORKDIR/checkpoints/dino_final.pt"     --stage1-ckpt  "$PBS_O_WORKDIR/checkpoints/vlm_stage1_projector.pt"     --qwen-path    "Qwen/Qwen3-4B-Instruct-2507"     --ckpt-dir     "$PBS_O_WORKDIR/checkpoints/full"     --log-dir      "$PBS_O_WORKDIR/logs/full"     --slice-start 509088 --slice-end 572724 --slice-seed 42     --total-train-steps 21875     --batch-size 2 --grad-accum 16 --lr 2e-4 --epochs 1     --num-workers 12 --log-every 20 --ckpt-every-steps 200
+RC=$?
+
+
+echo "================================"
+echo "exit code : $RC"
+date
+echo "================================"
+exit $RC

@@ -1,0 +1,45 @@
+#!/bin/sh
+# 2-epoch sanity check for DINO. Expected time: ~5-10 min on A100.
+# Cost: ~Rs 1 (1 GPU-hour billed even if job finishes early).
+#PBS -N dino_test
+#PBS -P col775.mt1230785.course
+#PBS -q standard
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=01:00:00
+#PBS -o logs/test_dino.out
+#PBS -e logs/test_dino.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "node list : $(cat $PBS_NODEFILE)"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs logs_test_dino checkpoints_test_dino
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+nvidia-smi 2>/dev/null || true
+python -c "import torch; print('torch', torch.__version__, 'cuda?', torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'NO GPU')"
+
+# 2 epochs into a throwaway checkpoint dir so we don't pollute the real run.
+python -u -m col775_a2.train_dino \
+    --data-root "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir  "$PBS_O_WORKDIR/checkpoints_test_dino" \
+    --log-dir   "$PBS_O_WORKDIR/logs_test_dino" \
+    --num-workers 8 \
+    --batch-size 128 \
+    --epochs 2 \
+    --log-every 20
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

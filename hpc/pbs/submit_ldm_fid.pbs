@@ -1,0 +1,54 @@
+#!/bin/sh
+# Generate 10k val images from captions via LDM (500 DDPM steps + CFG) and FID.
+# DDPM @ 500 steps, bs=16 -> roughly ~1.5-2s/step/batch -> ~5h for 10k images.
+# Allow 6h walltime headroom.
+#PBS -N ldm_fid
+#PBS -P col775.mt1230785.course
+#PBS -q standard
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=06:00:00
+#PBS -o logs/ldm_fid.out
+#PBS -e logs/ldm_fid.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs samples
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+export HF_HOME="$PBS_O_WORKDIR/hf_cache"
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+
+if [ -f "$PBS_O_WORKDIR/cleanfid_cache/inception-2015-12-05.pt" ]; then
+    cp -f "$PBS_O_WORKDIR/cleanfid_cache/inception-2015-12-05.pt" /tmp/inception-2015-12-05.pt
+    echo "[cleanfid] placed Inception weights at /tmp/inception-2015-12-05.pt"
+fi
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.sample_ldm \
+    --data-root   "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir    "$PBS_O_WORKDIR/checkpoints" \
+    --out-dir     "$PBS_O_WORKDIR/samples/ldm_val" \
+    --real-dir    "$PBS_O_WORKDIR/samples/real_val_128" \
+    --clip-path   "openai/clip-vit-base-patch32" \
+    --num-workers 4 \
+    --batch-size  16 \
+    --guidance    4.0 \
+    --timesteps   500 \
+    --full --fid
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

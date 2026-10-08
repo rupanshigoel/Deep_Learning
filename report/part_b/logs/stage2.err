@@ -1,0 +1,12 @@
+/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:143: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:02<00:05,  2.52s/it]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:05<00:02,  2.79s/it]Loading checkpoint shards: 100%|██████████| 3/3 [00:05<00:00,  1.85s/it]
+/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/peft/utils/save_and_load.py:372: UserWarning: Could not find a config file in Qwen/Qwen3-4B-Instruct-2507 - will assume that the vocabulary was not modified.
+  warnings.warn(
+=>> PBS: job killed: walltime 21721 exceeded limit 21600
+/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:143: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:02<00:04,  2.23s/it]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:05<00:02,  2.60s/it]Loading checkpoint shards: 100%|██████████| 3/3 [00:05<00:00,  1.71s/it]
+/home/maths/btech/mt1230785/.conda/envs/col775_t25/lib/python3.10/site-packages/peft/utils/save_and_load.py:372: UserWarning: Could not find a config file in Qwen/Qwen3-4B-Instruct-2507 - will assume that the vocabulary was not modified.
+  warnings.warn(
+=>> PBS: job killed: walltime 10852 exceeded limit 10800

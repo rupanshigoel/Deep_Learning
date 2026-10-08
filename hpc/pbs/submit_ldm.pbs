@@ -1,0 +1,53 @@
+#!/bin/sh
+# LDM (conditional U-Net) training: 150 epochs, batch 64 on A100.
+# Expect 20-30 min/epoch -> ~75-90h total, so re-submit 3-4x as walltime hits 24h.
+# Auto-resumes from checkpoints/ldm_last.pt.
+#
+# Needs: `pip install transformers cleanfid` in the col775_t25 env (see setup_hpc.sh).
+# Needs: upload_bundle/hf_cache/ (pre-populated via scripts/download_clip_text_encoder.py).
+#
+#PBS -N ldm_train
+#PBS -P col775.mt1230785.course
+#PBS -q standard
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=16:ngpus=1:centos=icelake
+#PBS -l walltime=24:00:00
+#PBS -o logs/ldm.out
+#PBS -e logs/ldm.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs checkpoints
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+# Force transformers / huggingface to run OFFLINE using the pre-shipped cache.
+export HF_HOME="$PBS_O_WORKDIR/hf_cache"
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+echo "HF_HOME=$HF_HOME"
+
+nvidia-smi 2>/dev/null || true
+python -c "import torch, transformers; print('torch', torch.__version__, 'transformers', transformers.__version__)"
+
+python -u -m col775_a2.train_ldm \
+    --data-root   "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir    "$PBS_O_WORKDIR/checkpoints" \
+    --log-dir     "$PBS_O_WORKDIR/logs" \
+    --clip-path   "openai/clip-vit-base-patch32" \
+    --num-workers 12 \
+    --batch-size  64 \
+    --epochs      150
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"

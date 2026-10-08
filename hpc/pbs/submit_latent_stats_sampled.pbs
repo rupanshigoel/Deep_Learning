@@ -1,0 +1,48 @@
+#!/bin/sh
+# Recompute per-channel mean/std of VAE latents over the Part_A train split,
+# this time using REPARAMETERISED z = mu + sigma*eps (not just mu) to match a
+# strict reading of "un-noised VAE latents" in the assignment spec.
+#
+# Writes checkpoints/latent_stats_sampled.pt (separate file; does NOT overwrite
+# the original latent_stats.pt that the trained LDM was conditioned on).
+#
+# We do NOT retrain the LDM; the comparison goes into the report's Design Notes.
+# Should take <15 min on A100.
+#PBS -N vae_latstats_sampled
+#PBS -P col775.mt1230785.course
+#PBS -q high
+#PBS -m bea
+#PBS -M mt1230785@iitd.ac.in
+#PBS -l select=1:ncpus=8:ngpus=1:centos=icelake
+#PBS -l walltime=01:00:00
+#PBS -o logs/latstats_sampled.out
+#PBS -e logs/latstats_sampled.err
+
+echo "================================"
+echo "PBS jobid : $PBS_JOBID"
+echo "workdir   : $PBS_O_WORKDIR"
+date
+echo "================================"
+
+cd $PBS_O_WORKDIR
+mkdir -p logs
+
+module load compiler/cuda/12.3/compilervars 2>/dev/null || true
+source $HOME/condaBaseSetup
+conda activate col775_t25
+
+nvidia-smi 2>/dev/null || true
+
+python -u -m col775_a2.compute_latent_stats \
+    --data-root "$PBS_O_WORKDIR/A2_dataset/Part_A" \
+    --ckpt-dir  "$PBS_O_WORKDIR/checkpoints" \
+    --batch-size 128 \
+    --num-workers 8 \
+    --use-sampled-z \
+    --out-name latent_stats_sampled.pt \
+    --seed 0
+
+echo "================================"
+echo "exit code : $?"
+date
+echo "================================"
